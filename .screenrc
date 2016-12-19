@@ -1,0 +1,35 @@
+#    ___  ___ _ __ ___  ___ _ __  _ __ ___
+#   / __|/ __| '__/ _ \/ _ \ '_ \| '__/ __|
+#  _\__ \ (__| | |  __/  __/ | | | | | (__
+# (_)___/\___|_|  \___|\___|_| |_|_|  \___|
+#
+
+
+autodetach on
+bell_msg "^G"
+startup_message off
+vbell off
+# 日本語設定
+defkanji utf-8
+defencoding utf-8
+encoding utf-8 utf-8
+# スクロールで戻せる行数
+defscrollback 10000
+# screenコマンド開始シーケンス
+escape ^Jj
+bind n screen
+bind h prev
+bind j next
+bind l windowlist
+# tabに表示する内容
+shelltitle "$ |$SHELL_NAME"
+# 最終行に表示する内容
+hardstatus alwayslastline "%{= wb}%-w%{=bu dr}%n %t%{-}%+w %=%{=b wb} %H %{=b wr} %Y/%m/%d %c:%s"
+hardstatus off
+# マウススクロールができるようになる(らしい)
+termcapinfo xterm* ti@:te@
+attrcolor b ".I"
+# bce(256色)モード
+defbce on
+termcap * 'G0:S0=\E(%.:E0=\E(B:TY=iso2022'
+#termcapinfo xterm* 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
