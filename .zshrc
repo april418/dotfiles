@@ -424,20 +424,20 @@ alias -g ....='../../..'
 # screenのとき最終行に常に
 # ディレクトリ名/コマンド名を表示させる
 # ========================================
-# 実行されたコマンドを引数付きで取得する
-function _get_executed_command() {
+# screenの現在表示しているタブに実行されたコマンドを引数付きでセットする
+function _set_executed_command_to_current_screen_tab() {
   echo -n "$*" | tr -s ' ' '\n' | tail -n 1 | echo -ne "\ek$1\e\\"
 }
 
-# screenの現在表示しているタブのステータス表示を更新する
-function _update_screen_current_tab_status() {
+# screenの現在表示しているタブに現在のディレクトリをセットする
+function _set_current_directory_to_current_screen_tab() {
   echo -ne "\ek$(basename $(pwd))\e\\"
 }
 
 # ターミナルがscreenならイベントに関数をバインド
 if [ "$TERM"="screen-bce" ]
 then
-  add-zsh-hook preexec _get_executed_command
-  add-zsh-hook precmd _update_screen_current_tab_status
+  add-zsh-hook preexec _set_executed_command_to_current_screen_tab
+  add-zsh-hook precmd _set_current_directory_to_current_screen_tab
 fi
 
