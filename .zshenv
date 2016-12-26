@@ -7,32 +7,43 @@
 
 
 # ========================================
-# terminal
+# zshの環境設定
 # ========================================
-if [ $TERM = "xterm" ]
+# 日本語環境
+export LANG=ja_JP.UTF-8
+
+# エディタはvi
+export EDITOR=vim
+
+# xtermを256色表示可能にする
+if [ "$TERM"="xterm" ]
 then
   export TERM="xterm-256color"
 fi
 
 
 # ========================================
-# rbenvの設定
+# rbenv設定
 # ========================================
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
 
 # ========================================
-# screenのstatusbarにディレクトリ名/コマンド名を表示させる
+# screen設定
 # ========================================
-if [ $TERM = 'screen-bce' ]
+if [ "$TERM"="screen-bce" ]
 then
   export SHELL_NAME="$(basename $SHELL)"
-  preexec() {
-    echo -n "$*" | tr -s ' ' '\n' | tail -n 1 | echo -ne "\ek$1\e\\"
-  }
-  precmd() {
-    echo -ne "\ek$(basename $(pwd))\e\\"
-  }
 fi
+
+
+# ========================================
+# oh-my-zsh設定
+# ========================================
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Path to your oh-my-zsh installation.
+export ZSH=~/.oh-my-zsh
 
