@@ -21,25 +21,23 @@ set runtimepath+=~/.vim/bundle/neobundle.vim/
 
 " Required:
 call neobundle#begin(expand('~/.vim/bundle/'))
+  " Let NeoBundle manage NeoBundle
+  " Required:
+  NeoBundleFetch 'Shougo/neobundle.vim'
 
-" Let NeoBundle manage NeoBundle
-" Required:
-NeoBundleFetch 'Shougo/neobundle.vim'
-
-" My Bundles here:
-" Refer to |:NeoBundle-examples|.
-" Note: You don't set neobundle setting in .gvimrc!
-NeoBundle 'Shougo/neocomplete'
-NeoBundle 'kchmck/vim-coffee-script'
-NeoBundle 'ryym/vim-riot'
-NeoBundle 'digitaltoad/vim-pug'
-NeoBundle 'w0ng/vim-hybrid'
-NeoBundle 'jpo/vim-railscasts-theme'
-NeoBundle 'tomasr/molokai'
-NeoBundle 'sjl/gundo.vim'
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/neomru.vim'
-
+  " My Bundles here:
+  " Refer to |:NeoBundle-examples|.
+  " Note: You don't set neobundle setting in .gvimrc!
+  NeoBundle 'Shougo/neocomplete'
+  NeoBundle 'kchmck/vim-coffee-script'
+  NeoBundle 'ryym/vim-riot'
+  NeoBundle 'digitaltoad/vim-pug'
+  NeoBundle 'w0ng/vim-hybrid'
+  NeoBundle 'jpo/vim-railscasts-theme'
+  NeoBundle 'tomasr/molokai'
+  NeoBundle 'sjl/gundo.vim'
+  NeoBundle 'Shougo/unite.vim'
+  NeoBundle 'Shougo/neomru.vim'
 call neobundle#end()
 
 " Required:
@@ -134,14 +132,6 @@ endif
 " ========================================
 " 入力モードで開始する
 let g:unite_enable_start_insert=1
-" バッファ一覧
-"noremap <C-P> :Unite buffer<CR>
-" ファイル一覧
-"noremap <C-N> :Unite -buffer-name=file file<CR>
-" 最近使ったファイルの一覧
-noremap <C-Z> :Unite file_mru<CR>
-" sourcesを「今開いているファイルのディレクトリ」とする
-noremap :uff :<C-u>UniteWithBufferDir file -buffer-name=file<CR>
 
 nnoremap s <Nop>
 nnoremap sj <C-w>j
@@ -180,42 +170,17 @@ nnoremap sf :<C-u>Unite -buffer-name=file file<CR>
 "call submode#map('bufmove', 'n', '', '+', '<C-w>+')
 "call submode#map('bufmove', 'n', '', '-', '<C-w>-')
 
-" ウィンドウを分割して開く
-"au FileType unite nnoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
-"au FileType unite inoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
-" ウィンドウを縦に分割して開く
-"au FileType unite nnoremap <silent> <buffer> <expr> <C-K> unite#do_action('vsplit')
-"au FileType unite inoremap <silent> <buffer> <expr> <C-K> unite#do_action('vsplit')
 " ESCキーを2回押すと終了する
 au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
 au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
 
 
 " ========================================
-" coffee-script設定
+" ハイライト設定
 " ========================================
-" vimにcoffeeファイルタイプを認識させる
+" coffee
 au BufRead,BufNewFile,BufReadPre *.coffee set filetype=coffee
-" インデント設定
-"autocmd FileType coffee setlocal sw=2 sts=2 ts=2 et
-" オートコンパイル
-"保存と同時にコンパイルする
-"autocmd BufWritePost *.coffee silent make!
-"エラーがあったら別ウィンドウで表示
-"autocmd QuickFixCmdPost * nested cwindow | redraw!
-" Ctrl-cで右ウィンドウにコンパイル結果を一時表示する
-"nnoremap <silent> <C-C> :CoffeeCompile vert <CR><C-w>h
-
-
-" ========================================
-" Gundo設定
-" ========================================
-nnoremap <F5> :GundoToggle<CR>
-
-
-" ========================================
-" pug設定
-" ========================================
+" pug
 au BufRead,BufNewFile,BufReadPre *.tag set filetype=pug
 
 
@@ -223,11 +188,8 @@ au BufRead,BufNewFile,BufReadPre *.tag set filetype=pug
 " カラースキーム設定
 " ========================================
 set background=dark
-colorscheme hybrid
-"let g:hybrid_custom_term_colors = 1
-let g:hybrid_reduced_contrast = 1 " Remove this line if using the default palette.
+colorscheme solarized
 "let g:solarized_termcolors=256
-"let g:molokai_original = 1
 "let g:rehash256 = 1
 set t_Co=256
 syntax on
@@ -260,13 +222,16 @@ set autoindent
 set showmatch
 
 
-" ========================================
+" ========================================　
 " その他設定
 " ========================================
+" 普通にバックスペースできるように
 set backspace=indent,eol,start
+" 行番号を表示
 set number
+" 現在行をハイライト表示
 set cursorline
-" 行末空白文字のハイライト
+" 行末空白文字をハイライト表示
 augroup HighlightTrailingSpaces
   autocmd!
   autocmd VimEnter,WinEnter,ColorScheme * highlight TrailingSpaces term=underline guibg=Red ctermbg=Red
