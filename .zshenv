@@ -7,12 +7,12 @@
 
 
 # ========================================
-# zshの環境設定
+# 環境設定
 # ========================================
-# 日本語環境
+# 言語を日本語にする
 export LANG=ja_JP.UTF-8
 
-# エディタはvi
+# エディタをvimにする
 export EDITOR=vim
 
 # xtermを256色表示可能にする
@@ -36,14 +36,4 @@ if [ "$TERM"="screen-bce" ]
 then
   export SHELL_NAME="$(basename $SHELL)"
 fi
-
-
-# ========================================
-# oh-my-zsh設定
-# ========================================
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
-# Path to your oh-my-zsh installation.
-export ZSH=~/.oh-my-zsh
 
