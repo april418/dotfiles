@@ -1,3 +1,4 @@
+#!/bin/zsh
 #            _
 #    _______| |__  _ __ ___
 #   |_  / __| '_ \| '__/ __|
@@ -7,28 +8,51 @@
 
 
 # ========================================
-# oh-my-zsh
+# zplugの設定
 # ========================================
-# Set name of the theme to load. Optionally, if you set this to "random"
-# it'll load a random theme each time that oh-my-zsh is loaded.
-# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="blinks"
+source ~/.zplug/init.zsh
 
-source $ZSH/oh-my-zsh.sh
+# zsh上でvimのvisual modeっぽい動作をさせる
+zplug "b4b4r07/zsh-vimode-visual"
+
+# 未インストール項目をインストールする
+if ! zplug check --verbose; then
+  printf "Install zsh plugins? [Yes/No]: "
+  if read -q; then
+    echo; zplug install
+  fi
+fi
+
+# コマンドをリンクして、PATH に追加し、プラグインは読み込む
+zplug load --verbose
 
 
 # ========================================
-# zsh-vimode-visual
+# モジュール読み込み
 # ========================================
-source ~/zsh-vimode-visual/zsh-vimode-visual.zsh
+# イベントに関数をバインドできるようにする
+autoload -Uz add-zsh-hook
+# プロンプト
+#autoload -Uz promptinit; promptinit
+# バージョン管理情報を取得できるようにする
+autoload -Uz vcs_info
+# zshのバージョンごとに挙動を変えられるようにする
+autoload -Uz is-at-least
+# 端末情報を取得できるようにする
+autoload -Uz terminfo
+# 色を詳細に設定できるようにする
+autoload -Uz colors; colors
+# 補完機能を使用できるようにする
+autoload -Uz compinit; compinit -u
+# cdr を有効にする
+autoload -Uz chpwd_recent_dirs cdr
+# 履歴検索
+autoload -Uz history-search-end
 
 
 # ========================================
 # 色
 # ========================================
-# 色のセット
-autoload -Uz colors
-colors
 local DEFAULT=%{$reset_color%}
 local RED=%{$fg[red]%}
 local GREEN="%{[38;5;006m%}"
@@ -39,16 +63,6 @@ local PURPLE="%{[38;5;013m%}"
 local WHITE=%{$fg[white]%}
 local ORANGE="%{[38;5;009m%}"
 local PINK="%{[38;5;005m%}"
-
-
-# ========================================
-# モジュール読み込み
-# ========================================
-autoload -Uz add-zsh-hook
-autoload -Uz promptinit; promptinit
-autoload -Uz vcs_info
-autoload -Uz is-at-least
-autoload -Uz terminfo
 
 
 # ========================================
@@ -66,11 +80,11 @@ add-zsh-hook preexec left_down_prompt_preexec
 function _update_input_mode() {
   case $KEYMAP in
     main|viins)
-      INPUT_MODE="$BLUE-- INSERT --$DEFAULT" ;;
+      INPUT_MODE="${BLUE}-- INSERT --$DEFAULT" ;;
     vicmd)
-      INPUT_MODE="$WHITE-- NORMAL --$DEFAULT" ;;
+      INPUT_MODE="${WHITE}-- NORMAL --$DEFAULT" ;;
     vivis|vivli)
-      INPUT_MODE="$ORANGE-- VISUAL --$DEFAULT" ;;
+      INPUT_MODE="${ORANGE}-- VISUAL --$DEFAULT" ;;
   esac
 }
 
@@ -88,7 +102,7 @@ zle -N edit-command-line
 # Helper function
 # use 'zle -la' option
 # zsh -la option returns true if the widget exists
-has_widgets() {
+function has_widgets() {
   if [[ -z $1 ]]; then
     return 1
   fi
@@ -98,7 +112,7 @@ has_widgets() {
 
 # Helper function
 # use bindkey -l
-has_keymap() {
+function has_keymap() {
   if [[ -z $1 ]]; then
     return 1
   fi
@@ -107,7 +121,7 @@ has_keymap() {
 }
 
 # Easy to escape
-bindkey -M viins 'jj'  vi-cmd-mode
+bindkey -M viins 'jj' vi-cmd-mode
 has_keymap "vivis" && bindkey -M vivis 'jj' vi-visual-exit
 
 # Merge emacs mode to viins mode
@@ -180,20 +194,12 @@ zle -N do-enter
 bindkey '^m' do-enter
 
 # https://github.com/zsh-users/zsh-history-substring-search
-has_widgets 'history-substring-search-up' &&
-  bindkey -M emacs '^P' history-substring-search-up
-has_widgets 'history-substring-search-down' &&
-  bindkey -M emacs '^N' history-substring-search-down
-
-has_widgets 'history-substring-search-up' &&
-  bindkey -M viins '^P' history-substring-search-up
-has_widgets 'history-substring-search-down' &&
-  bindkey -M viins '^N' history-substring-search-down
-
-has_widgets 'history-substring-search-up' &&
-  bindkey -M vicmd 'k' history-substring-search-up
-has_widgets 'history-substring-search-down' &&
-  bindkey -M vicmd 'j' history-substring-search-down
+has_widgets 'history-substring-search-up' && bindkey -M emacs '^P' history-substring-search-up
+has_widgets 'history-substring-search-down' && bindkey -M emacs '^N' history-substring-search-down
+has_widgets 'history-substring-search-up' && bindkey -M viins '^P' history-substring-search-up
+has_widgets 'history-substring-search-down' && bindkey -M viins '^N' history-substring-search-down
+has_widgets 'history-substring-search-up' && bindkey -M vicmd 'k' history-substring-search-up
+has_widgets 'history-substring-search-down' && bindkey -M vicmd 'j' history-substring-search-down
 
 if is-at-least 5.0.8; then
   autoload -Uz surround
@@ -292,10 +298,6 @@ add-zsh-hook precmd _update_main_prompt
 # ========================================
 # 補完
 # ========================================
-# 補完機能
-autoload -Uz compinit
-# 補完を賢くする
-compinit -u
 # ディレクトリ名のみでcd
 setopt auto_cd
 # リストを詰めて表示
@@ -362,8 +364,6 @@ setopt pushd_ignore_dups
 # ========================================
 # cdr
 # ========================================
-# cdr, add-zsh-hook を有効にする
-autoload -Uz chpwd_recent_dirs cdr
 add-zsh-hook chpwd chpwd_recent_dirs
 # cdr の設定
 zstyle ':completion:*' recent-dirs-insert both
@@ -396,17 +396,6 @@ setopt hist_ignore_all_dups
 # 重複するコマンドが保存されるとき、古い方を削除する。
 setopt hist_save_no_dups
 # コマンド履歴呼び出し
-autoload -Uz history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-bindkey "^P" history-beginning-search-backward-end
-bindkey "^N" history-beginning-search-forward-end
-
-
-# ========================================
-# history 操作
-# ========================================
-autoload -Uz history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 bindkey "^P" history-beginning-search-backward-end
@@ -418,10 +407,11 @@ bindkey "^N" history-beginning-search-forward-end
 # ========================================
 alias -g ...='../..'
 alias -g ....='../../..'
+alias printcolors='for c in {000..255}; do echo -n "\e[38;5;${c}m $c" ; [ $(($c%16)) -eq 15 ] && echo;done;echo'
 
 
 # ========================================
-# screenのとき最終行に常に
+# ターミナルがscreenのとき最終行に常に
 # ディレクトリ名/コマンド名を表示させる
 # ========================================
 # screenの現在表示しているタブに実行されたコマンドを引数付きでセットする
