@@ -73,6 +73,8 @@ local PINK="%{[38;5;005m%}"
 # viライクなキーバインド
 bindkey -v
 
+# 入力モードを変数に格納しておく
+INPUT_MODE="${BLUE}-- INSERT --$DEFAULT"
 function _update_input_mode() {
   case $KEYMAP in
     main|viins)
