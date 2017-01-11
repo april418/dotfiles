@@ -32,12 +32,10 @@ call neobundle#begin(expand('~/.vim/bundle/'))
   NeoBundle 'kchmck/vim-coffee-script'
   NeoBundle 'ryym/vim-riot'
   NeoBundle 'digitaltoad/vim-pug'
-  NeoBundle 'w0ng/vim-hybrid'
-  NeoBundle 'jpo/vim-railscasts-theme'
-  NeoBundle 'tomasr/molokai'
-  NeoBundle 'sjl/gundo.vim'
+  NeoBundle 'altercation/vim-colors-solarized'
   NeoBundle 'Shougo/unite.vim'
   NeoBundle 'Shougo/neomru.vim'
+  NeoBundle 'kana/vim-submode'
 call neobundle#end()
 
 " Required:
@@ -133,46 +131,91 @@ endif
 " 入力モードで開始する
 let g:unite_enable_start_insert=1
 
+" 元々のコマンドをなかったことに
 nnoremap s <Nop>
+"" 分割画面の移動
+" 下
 nnoremap sj <C-w>j
+" 上
 nnoremap sk <C-w>k
+" 右
 nnoremap sl <C-w>l
+" 左
 nnoremap sh <C-w>h
+"" 画面の表示位置を移動
+" 下
 nnoremap sJ <C-w>J
+" 上
 nnoremap sK <C-w>K
+" 右
 nnoremap sL <C-w>L
+" 左
 nnoremap sH <C-w>H
-nnoremap sn gt
-nnoremap sp gT
+" 分割画面の入れ替え
 nnoremap sr <C-w>r
-nnoremap s= <C-w>=
+" 次のウインドウへ
 nnoremap sw <C-w>w
-nnoremap so <C-w>_<C-w>|
-nnoremap sO <C-w>=
-nnoremap sN :<C-u>bn<CR>
-nnoremap sP :<C-u>bp<CR>
-nnoremap st :<C-u>tabnew<CR>
-nnoremap sT :<C-u>Unite tab<CR>
+" 画面の縦分割
 nnoremap ss :<C-u>sp<CR>
+" 画面の横分割
 nnoremap sv :<C-u>vs<CR>
+" 画面を閉じる
 nnoremap sq :<C-u>q<CR>
+" 画面を閉じてバッファからも消す
 nnoremap sQ :<C-u>bd<CR>
+" 画面の大きさを揃える
+nnoremap s= <C-w>=
+nnoremap sO <C-w>=
+" 縦に最大化
+nnoremap su <C-w>_
+" 横に最大化
+nnoremap si <C-w>|
+
+" 次のタブへ
+nnoremap sn gt
+" 前のタブへ
+nnoremap sp gT
+" タブを開く
+nnoremap st :<C-u>tabnew<CR>
+" タブ一覧
+nnoremap sT :<C-u>Unite tab<CR>
+
+" 次のバッファへ
+nnoremap sN :<C-u>bn<CR>
+" 前のバッファへ
+nnoremap sP :<C-u>bp<CR>
+" 現在のタブで開いたものだけのバッファ一覧
 nnoremap sB :<C-u>Unite buffer_tab -buffer-name=file<CR>
+" バッファ一覧
 nnoremap sb :<C-u>Unite buffer -buffer-name=file<CR>
+
+" ファイル検索
 nnoremap sf :<C-u>Unite -buffer-name=file file<CR>
 
-"call submode#enter_with('bufmove', 'n', '', 's>', '<C-w>>')
-"call submode#enter_with('bufmove', 'n', '', 's<', '<C-w><')
-"call submode#enter_with('bufmove', 'n', '', 's+', '<C-w>+')
-"call submode#enter_with('bufmove', 'n', '', 's-', '<C-w>-')
-"call submode#map('bufmove', 'n', '', '>', '<C-w>>')
-"call submode#map('bufmove', 'n', '', '<', '<C-w><')
-"call submode#map('bufmove', 'n', '', '+', '<C-w>+')
-"call submode#map('bufmove', 'n', '', '-', '<C-w>-')
+" 連打できるように
+call submode#enter_with('bufmove', 'n', '', 's>', '<C-w>>')
+call submode#enter_with('bufmove', 'n', '', 's<', '<C-w><')
+call submode#enter_with('bufmove', 'n', '', 's+', '<C-w>+')
+call submode#enter_with('bufmove', 'n', '', 's-', '<C-w>-')
+call submode#enter_with('bufmove', 'n', '', 'sw', '<C-w>w')
+call submode#map('bufmove', 'n', '', '>', '<C-w>>')
+call submode#map('bufmove', 'n', '', '<', '<C-w><')
+call submode#map('bufmove', 'n', '', '+', '<C-w>+')
+call submode#map('bufmove', 'n', '', '-', '<C-w>-')
+call submode#map('bufmove', 'n', '', 'w', '<C-w>w')
 
 " ESCキーを2回押すと終了する
 au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
 au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
+
+
+" ========================================
+" キーバインド
+" ========================================
+" 行頭へ移動
+noremap h ^
+" 行末へ移動
+noremap l $
 
 
 " ========================================
@@ -222,7 +265,7 @@ set autoindent
 set showmatch
 
 
-" ========================================　
+" ========================================
 " その他設定
 " ========================================
 " 普通にバックスペースできるように
@@ -231,14 +274,16 @@ set backspace=indent,eol,start
 set number
 " 現在行をハイライト表示
 set cursorline
-" 行末空白文字をハイライト表示
-augroup HighlightTrailingSpaces
-  autocmd!
-  autocmd VimEnter,WinEnter,ColorScheme * highlight TrailingSpaces term=underline guibg=Red ctermbg=Red
-  autocmd VimEnter,WinEnter * match TrailingSpaces /\s\+$/
-augroup END
+" 行末空白文字もしくは全角空白をハイライト表示
+if has('syntax')
+  augroup HighlightTrailingSpaces
+    autocmd!
+    autocmd VimEnter,WinEnter,Colorscheme * highlight Spaces term=underline guibg=Red ctermbg=Red
+    autocmd VimEnter,WinEnter * match Spaces /\(\s\+$\|　\)/
+  augroup END
+endif
 " 行末空白文字の削除
-autocmd BufWritePre * :%s/\s\+$//ge
+autocmd BufWritePre * :%s/\(\s\|　\)\+$//ge
 " ファイル読み込み時にscreenタブの内容を書き換える
 au BufEnter * :silent exec "!echo -ne '\ekvi <afile>\e\\'"
 
@@ -248,4 +293,5 @@ au BufEnter * :silent exec "!echo -ne '\ekvi <afile>\e\\'"
 " ========================================
 set undofile
 set undodir=$HOME/.vim/undo
+
 

@@ -1,3 +1,4 @@
+#
 #    ___  ___ _ __ ___  ___ _ __  _ __ ___
 #   / __|/ __| '__/ _ \/ _ \ '_ \| '__/ __|
 #  _\__ \ (__| | |  __/  __/ | | | | | (__
@@ -5,31 +6,94 @@
 #
 
 
-autodetach on
-bell_msg "^G"
-startup_message off
-vbell off
+# ========================================
+#   キー設定
+# ========================================
+# screenコマンド開始シーケンス
+escape ^jj
+
+## デフォルトのキー設定を一部unbindする
+#break
+bind b
+bind ^b
+# screen
+bind c
+bind ^c
+# next
+#bind n
+#bind ^n
+bind <SPC>
+# prev
+bind p
+bind ^p
+#bind ^h
+bind <BackSpace>
+
+## 独自のキー設定
+# 新規タブを開く
+bind j screen
+bind ^j screen
+# 前のタブ
+bind h prev
+bind ^h prev
+# 次のタブ(デフォルト)
+#bind n next
+#bind ^n next
+# タブを閉じる(デフォルト)
+#bind k kill
+#bind ^k kill
+# タブのリストを表示
+bind l windowlist
+bind ^l windowlist
+# タブの番号を変更
+bind ^0 number 0
+bind ^1 number 1
+bind ^2 number 2
+bind ^3 number 3
+bind ^4 number 4
+bind ^5 number 5
+bind ^6 number 6
+bind ^7 number 7
+bind ^8 number 8
+bind ^9 number 9
+
+
+# ========================================
+#   表示設定
+# ========================================
 # 日本語設定
 defkanji utf-8
 defencoding utf-8
 encoding utf-8 utf-8
+termcap * 'G0:S0=\E(%.:E0=\E(B:TY=iso2022'
+
 # スクロールで戻せる行数
 defscrollback 10000
-# screenコマンド開始シーケンス
-escape ^Jj
-bind n screen
-bind h prev
-bind j next
-bind l windowlist
-# tabに表示する内容
+
+# タブタイトルに表示する内容
 shelltitle "$ |$SHELL_NAME"
+
 # 最終行に表示する内容
 hardstatus alwayslastline "%{= wb}%-w%{=bu dr}%n %t%{-}%+w %=%{=b wb} %H %{=b wr} %Y/%m/%d %c:%s"
 hardstatus off
-# マウススクロールができるようになる(らしい)
-termcapinfo xterm* ti@:te@
-attrcolor b ".I"
-# bce(256色)モード
+
+# デフォルト背景色を無効に
 defbce on
-termcap * 'G0:S0=\E(%.:E0=\E(B:TY=iso2022'
-#termcapinfo xterm* 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+
+
+# ========================================
+#   その他
+# ========================================
+# 起動時にメッセージを表示しない
+startup_message off
+
+# ハングアップしたときに自動でデタッチ
+autodetach on
+
+# ヴィジュアルベルをオフに(使ったこともない)
+vbell off
+
+# ウインドウ幅を勝手に変更しない
+termcapinfo xterm-256color hs@:is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l\E[?1;4;6l
+
+
