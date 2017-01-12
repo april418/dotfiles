@@ -7,6 +7,15 @@
 
 
 " ========================================
+" 関数定義
+" ========================================
+function! s:has_plugin(plugin)
+  return !empty(globpath(&runtimepath, 'plugin/' . a:plugin . '.vim'))
+  \   || !empty(globpath(&runtimepath, 'autoload/' . a:plugin . '.vim'))
+endfunction
+
+
+" ========================================
 " NeoBundle設定
 " ========================================
 " Note: Skip initialization for vim-tiny or vim-small.
@@ -36,6 +45,9 @@ call neobundle#begin(expand('~/.vim/bundle/'))
   NeoBundle 'Shougo/unite.vim'
   NeoBundle 'Shougo/neomru.vim'
   NeoBundle 'kana/vim-submode'
+  NeoBundle 'tpope/vim-fugitive'
+  NeoBundle 'kmnk/vim-unite-giti'
+  NeoBundle 'gregsexton/gitv'
 call neobundle#end()
 
 " Required:
@@ -193,20 +205,64 @@ nnoremap sb :<C-u>Unite buffer -buffer-name=file<CR>
 nnoremap sf :<C-u>Unite -buffer-name=file file<CR>
 
 " 連打できるように
-call submode#enter_with('bufmove', 'n', '', 's>', '<C-w>>')
-call submode#enter_with('bufmove', 'n', '', 's<', '<C-w><')
-call submode#enter_with('bufmove', 'n', '', 's+', '<C-w>+')
-call submode#enter_with('bufmove', 'n', '', 's-', '<C-w>-')
-call submode#enter_with('bufmove', 'n', '', 'sw', '<C-w>w')
-call submode#map('bufmove', 'n', '', '>', '<C-w>>')
-call submode#map('bufmove', 'n', '', '<', '<C-w><')
-call submode#map('bufmove', 'n', '', '+', '<C-w>+')
-call submode#map('bufmove', 'n', '', '-', '<C-w>-')
-call submode#map('bufmove', 'n', '', 'w', '<C-w>w')
+if s:has_plugin('submode')
+  call submode#enter_with('bufmove', 'n', '', 's>', '<C-w>>')
+  call submode#enter_with('bufmove', 'n', '', 's<', '<C-w><')
+  call submode#enter_with('bufmove', 'n', '', 's+', '<C-w>+')
+  call submode#enter_with('bufmove', 'n', '', 's-', '<C-w>-')
+  call submode#enter_with('bufmove', 'n', '', 'sw', '<C-w>w')
+  call submode#map('bufmove', 'n', '', '>', '<C-w>>')
+  call submode#map('bufmove', 'n', '', '<', '<C-w><')
+  call submode#map('bufmove', 'n', '', '+', '<C-w>+')
+  call submode#map('bufmove', 'n', '', '-', '<C-w>-')
+  call submode#map('bufmove', 'n', '', 'w', '<C-w>w')
+endif
 
 " ESCキーを2回押すと終了する
 au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
 au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
+
+
+" ========================================
+" unite-giti設定
+" ========================================
+if s:has_plugin('giti')
+  let g:giti_log_default_line_count = 100
+  "nnoremap <expr><silent> gD ':<C-u>GitiDiff ' . expand('%:p') . '<CR>'
+  "nnoremap <expr><silent> gd ':<C-u>GitiDiffCached ' . expand('%:p') .  '<CR>'
+  "nnoremap <silent> gf :<C-u>GitiFetch<CR>
+  "nnoremap <silent> gF :<C-u>GitiFetch
+  "nnoremap <expr><silent> gp ':<C-u>GitiPushWithSettingUpstream origin ' . giti#branch#current_name() . '<CR>'
+  "nnoremap <silent> gP :<C-u>GitiPull<CR>
+  "nnoremap <expr><silent> gl ':<C-u>GitiLogLine ' . expand('%:p') . '<CR>'
+  "nnoremap <expr><silent> gL ':<C-u>GitiLog ' . expand('%:p') . '<CR>'
+
+  "nnoremap <silent> gs :<C-u>Unite giti<CR>
+  nnoremap <silent> gst :<C-u>Unite giti/status<CR>
+  nnoremap <silent> gb :<C-u>Unite giti/branch<CR>
+  nnoremap <silent> gB :<C-u>Unite giti/branch_all<CR>
+  nnoremap <silent> gc :<C-u>Unite giti/config<CR>
+  nnoremap <silent> gl :<C-u>Unite giti/log<CR>
+  nnoremap <expr><silent> gL ':<C-u>Unite giti/log:' . expand('%:p') . '<CR>'
+endif
+
+
+" ========================================
+" fugitive設定
+" ========================================
+if s:has_plugin('fugitive')
+  nnoremap <silent> gd :<C-u>Gdiff<CR>
+endif
+
+
+" ========================================
+" gitv設定
+" ========================================
+if s:has_plugin('gitv')
+  autocmd FileType git :setlocal foldlevel=99
+  nnoremap <silent> gV :<C-u>Gitv<CR>
+  nnoremap <silent> gv :<C-u>Gitv!<CR>
+endif
 
 
 " ========================================
@@ -266,6 +322,22 @@ set showmatch
 
 
 " ========================================
+" undo設定
+" ========================================
+set undofile
+set undodir=$HOME/.vim/undo
+
+
+" ========================================
+" Statuslineの設定
+" ========================================
+set laststatus=2
+if s:has_plugin('fugitive')
+  set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ \[ENC=%{&fileencoding}]%P
+endif
+
+
+" ========================================
 " その他設定
 " ========================================
 " 普通にバックスペースできるように
@@ -286,12 +358,5 @@ endif
 autocmd BufWritePre * :%s/\(\s\|　\)\+$//ge
 " ファイル読み込み時にscreenタブの内容を書き換える
 au BufEnter * :silent exec "!echo -ne '\ekvi <afile>\e\\'"
-
-
-" ========================================
-" undo設定
-" ========================================
-set undofile
-set undodir=$HOME/.vim/undo
 
 
