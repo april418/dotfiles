@@ -33,29 +33,34 @@ bind <BackSpace>
 # 新規タブを開く
 bind j screen
 bind ^j screen
+bindkey [A screen
 # 前のタブ
 bind h prev
 bind ^h prev
+bindkey [D prev
 # 次のタブ(デフォルト)
 #bind n next
 #bind ^n next
+bindkey [C next
 # タブを閉じる(デフォルト)
 #bind k kill
 #bind ^k kill
+#bindkey [B kill
 # タブのリストを表示
 bind l windowlist
 bind ^l windowlist
-# タブの番号を変更
-bind ^0 number 0
-bind ^1 number 1
-bind ^2 number 2
-bind ^3 number 3
-bind ^4 number 4
-bind ^5 number 5
-bind ^6 number 6
-bind ^7 number 7
-bind ^8 number 8
-bind ^9 number 9
+bindkey [B windowlist
+# タブの番号を変更(デフォルトはその番号のタブに移動)
+bind 0 number 0
+bind 1 number 1
+bind 2 number 2
+bind 3 number 3
+bind 4 number 4
+bind 5 number 5
+bind 6 number 6
+bind 7 number 7
+bind 8 number 8
+bind 9 number 9
 
 
 # ========================================
