@@ -244,6 +244,7 @@ if s:has_plugin('giti')
   nnoremap <silent> gc :<C-u>Unite giti/config<CR>
   nnoremap <silent> gl :<C-u>Unite giti/log<CR>
   nnoremap <expr><silent> gL ':<C-u>Unite giti/log:' . expand('%:p') . '<CR>'
+  nnoremap <silent> gG :<C-u>Unite giti/grep<CR>
 endif
 
 
