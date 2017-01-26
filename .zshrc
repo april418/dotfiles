@@ -293,7 +293,7 @@ function _set_current_directory_to_current_screen_tab() {
   print -bNP "\ek$(basename $PWD)\e\\"
 }
 
-# ターミナルがscreenならイベントに関数をバインド
+# ターミナルがscreenならイベントに関数をバインド(思った通りに動いてないので要改良)
 case $TERM in
   screen*|xterm*)
     add-zsh-hook preexec _set_executed_command_to_current_screen_tab

@@ -280,8 +280,8 @@ noremap l $
 " ========================================
 " coffee
 au BufRead,BufNewFile,BufReadPre *.coffee set filetype=coffee
-" pug
-au BufRead,BufNewFile,BufReadPre *.tag set filetype=pug
+" riot tag
+au BufRead,BufNewFile,BufReadPre *.tag set filetype=tag
 
 
 " ========================================
