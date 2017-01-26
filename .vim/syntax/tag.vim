@@ -280,8 +280,8 @@ hi def link pugCommentBlock           Comment
 hi def link pugHtmlConditionalComment pugComment
 
 " set syntax
-let b:current_syntax = "pug"
+let b:current_syntax = "tag"
 
-if main_syntax == "pug"
+if main_syntax == "tag"
   unlet main_syntax
 endif
