@@ -1,0 +1,32 @@
+#!/bin/bash
+
+create_random_password() {
+  local option
+  local word_length
+  local create_count
+
+  while getopts w:n:h option
+  do
+    case $option in
+      w) word_length=$option
+         ;;
+      n) create_count=$option
+         ;;
+      h) echo "Usage: $0 [-w wordlength] [-n createcount]"
+         exit 0
+         ;;
+    esac
+  done
+
+  if [ "$word_length" = "" ]; then
+    word_length=8
+  fi
+  if [ "$create_count" = "" ]; then
+    create_count=1
+  fi
+
+  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $word_length | head -n $create_count | sort | uniq
+}
+
+create_random_password $@
+
