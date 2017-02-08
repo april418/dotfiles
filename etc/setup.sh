@@ -270,7 +270,7 @@ dotfiles_logo='
   Copyright (c) 2017 @april418
   Licensed under the MIT license.
 
-  Use @b4b4r07 dotfiles as reference.
+  Inspired by @b4b4r07 dotfiles.
   Thanks a lot!
   ====================================
 '

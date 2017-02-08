@@ -7,7 +7,7 @@
 
 
 " ========================================
-" 関数定義
+"   関数定義
 " ========================================
 function! s:has_plugin(plugin)
   return !empty(globpath(&runtimepath, 'plugin/' . a:plugin . '.vim'))
@@ -16,7 +16,7 @@ endfunction
 
 
 " ========================================
-" NeoBundle設定
+"   NeoBundle設定
 " ========================================
 " Note: Skip initialization for vim-tiny or vim-small.
 if 0 | endif
@@ -59,7 +59,7 @@ NeoBundleCheck
 
 
 " ========================================
-" NeoComplete設定
+"   NeoComplete設定
 " ========================================
 " Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
 " Disable AutoComplPop.
@@ -138,7 +138,7 @@ endif
 
 
 " ========================================
-" unite.vim設定
+"   unite.vim設定
 " ========================================
 " 入力モードで開始する
 let g:unite_enable_start_insert=1
@@ -224,7 +224,7 @@ au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
 
 
 " ========================================
-" unite-giti設定
+"   unite-giti設定
 " ========================================
 if s:has_plugin('giti')
   let g:giti_log_default_line_count = 100
@@ -249,7 +249,7 @@ endif
 
 
 " ========================================
-" fugitive設定
+"   fugitive設定
 " ========================================
 if s:has_plugin('fugitive')
   nnoremap <silent> gd :<C-u>Gdiff<CR>
@@ -257,7 +257,7 @@ endif
 
 
 " ========================================
-" gitv設定
+"   gitv設定
 " ========================================
 if s:has_plugin('gitv')
   autocmd FileType git :setlocal foldlevel=99
@@ -267,7 +267,7 @@ endif
 
 
 " ========================================
-" キーバインド
+"   キーバインド
 " ========================================
 " 行頭へ移動
 noremap h ^
@@ -276,7 +276,7 @@ noremap l $
 
 
 " ========================================
-" ハイライト設定
+"   ハイライト設定
 " ========================================
 " coffee
 au BufRead,BufNewFile,BufReadPre *.coffee set filetype=coffee
@@ -285,7 +285,7 @@ au BufRead,BufNewFile,BufReadPre *.tag set filetype=tag
 
 
 " ========================================
-" カラースキーム設定
+"   カラースキーム設定
 " ========================================
 set background=dark
 colorscheme solarized
@@ -296,7 +296,7 @@ syntax on
 
 
 " ========================================
-" 検索設定
+"   検索設定
 " ========================================
 set ignorecase
 set smartcase
@@ -305,7 +305,7 @@ set hlsearch
 
 
 " ========================================
-" タブ幅設定
+"   タブ幅設定
 " ========================================
 set tabstop=2
 set expandtab
@@ -316,21 +316,21 @@ set wrap
 
 
 " ========================================
-" インデント設定
+"   インデント設定
 " ========================================
 set autoindent
 set showmatch
 
 
 " ========================================
-" undo設定
+"   undo設定
 " ========================================
 set undofile
 set undodir=$HOME/.vim/undo
 
 
 " ========================================
-" Statuslineの設定
+"   Statuslineの設定
 " ========================================
 set laststatus=2
 if s:has_plugin('fugitive')
@@ -339,7 +339,7 @@ endif
 
 
 " ========================================
-" その他設定
+"   その他設定
 " ========================================
 " 普通にバックスペースできるように
 set backspace=indent,eol,start
