@@ -282,6 +282,8 @@ noremap l $
 au BufRead,BufNewFile,BufReadPre *.coffee set filetype=coffee
 " riot tag
 au BufRead,BufNewFile,BufReadPre *.tag set filetype=tag
+" cson
+au BufRead,BufNewFile,BufReadPre *.cson set filetype=coffee
 
 
 " ========================================

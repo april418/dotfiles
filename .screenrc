@@ -61,6 +61,14 @@ bind 6 number 6
 bind 7 number 7
 bind 8 number 8
 bind 9 number 9
+# enter copy mode and move up one page
+bindkey "^[k" eval "copy" "stuff ^b"
+# enter copy mode and move up one line
+bindkey "^k" eval "copy" "stuff k"
+# move up one page
+bindkey -m "^[k" stuff ^b
+# move up one line
+bindkey -m "^k" stuff k
 
 
 # ========================================
