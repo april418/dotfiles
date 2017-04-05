@@ -298,6 +298,25 @@ syntax on
 
 
 " ========================================
+"   表示設定
+" ========================================
+set list
+set listchars=tab:»-,eol:↓
+" 行番号を表示
+set number
+" 現在行をハイライト表示
+set cursorline
+" 行末空白文字もしくは全角空白をハイライト表示
+if has('syntax')
+  augroup HighlightTrailingSpaces
+    autocmd!
+    autocmd VimEnter,WinEnter,Colorscheme * highlight Spaces term=underline guibg=Red ctermbg=Red
+    autocmd VimEnter,WinEnter * match Spaces /\(\s\+$\|　\)/
+  augroup END
+endif
+
+
+" ========================================
 "   検索設定
 " ========================================
 set ignorecase
@@ -345,18 +364,6 @@ endif
 " ========================================
 " 普通にバックスペースできるように
 set backspace=indent,eol,start
-" 行番号を表示
-set number
-" 現在行をハイライト表示
-set cursorline
-" 行末空白文字もしくは全角空白をハイライト表示
-if has('syntax')
-  augroup HighlightTrailingSpaces
-    autocmd!
-    autocmd VimEnter,WinEnter,Colorscheme * highlight Spaces term=underline guibg=Red ctermbg=Red
-    autocmd VimEnter,WinEnter * match Spaces /\(\s\+$\|　\)/
-  augroup END
-endif
 " 行末空白文字の削除
 autocmd BufWritePre * :%s/\(\s\|　\)\+$//ge
 " ファイル読み込み時にscreenタブの内容を書き換える
