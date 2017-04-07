@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#        _ _
+#   __ _(_) |_
+#  / _` | | __|
+# | (_| | | |_
+#  \__, |_|\__|
+#  |___/
+#
+
+source "$DOTPATH/etc/core"
+package install git
+

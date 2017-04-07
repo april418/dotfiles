@@ -1,0 +1,155 @@
+#!/bin/bash
+
+#  _           _        _ _
+# (_)_ __  ___| |_ __ _| | |
+# | | '_ \/ __| __/ _` | | |
+# | | | | \__ \ || (_| | | |
+# |_|_| |_|___/\__\__,_|_|_|
+#
+#
+
+dotfiles_repo="https://github.com/april418/dotfiles"
+dotfiles_git="$dotfiles_repo.git"
+dotfiles_tar="$dotfiles_repo/archive/master.tar.gz"
+dotfiles_logo='
+====================================
+      _       _    __ _ _
+   __| | ___ | |_ / _(_) | ___  ___
+  / _` |/ _ \| __| |_| | |/ _ \/ __|
+ | (_| | (_) | |_|  _| | |  __/\__ \
+(_)__,_|\___/ \__|_| |_|_|\___||___/
+
+====================================
+Copyright (c) 2017 @april418
+Licensed under the MIT license.
+
+Inspired by @b4b4r07 dotfiles.
+Thanks a lot!
+====================================
+'
+
+# confirm whether dotfiles exist or not
+confirm_dotfiles_exist() {
+  if [ ! -d $DOTPATH ]; then
+    log_fail "$DOTPATH: not found"
+    exit 1
+  fi
+  return 0
+}
+
+# confirm whether dotfiles exist or not
+confirm_dotfiles_not_exist() {
+  if [ -d $DOTPATH ]; then
+    log_fail "$DOTPATH: already exists"
+    exit 1
+  fi
+  return 0
+}
+
+# confirm whether makefile exists or not
+confirm_makefile_exists() {
+  if [ ! -f Makefile ]; then
+    log_fail "Makefile: not found"
+    exit 1
+  fi
+  return 0
+}
+
+# execute make and that before conform whether target file and directory exist
+execute_make() {
+  confirm_dotfiles_exist
+  cd "$DOTPATH"
+  confirm_makefile_exists
+  make $@
+}
+
+# include core script
+include_core() {
+  eval "$(curl -sL raw.githubusercontent.com/april418/dotfiles/master/etc/core)"
+}
+
+dotfiles_download() {
+  e_newline
+  e_header "Downloading dotfiles..."
+
+  confirm_dotfiles_not_exist
+
+  if is_exists "git"; then
+    git clone --recursive "$dotfiles_git" "$DOTPATH"
+  elif is_exists "curl" || is_exists "wget"; then
+    if is_exists "curl"; then
+      curl -L "$dotfiles_tar"
+    elif is_exists "wget"; then
+      wget -O - "$dotfiles_tar"
+    fi | tar xvz
+
+    if [ ! -d dotfiles-master ]; then
+      log_fail "dotfiles-master: not found"
+      exit 1
+    fi
+
+    command mv -f dotfiles-master "$DOTPATH"
+  else
+    log_fail "curl or wget required"
+    exit 1
+  fi
+
+  e_newline && e_done "Download"
+}
+
+dotfiles_deploy() {
+  e_newline
+  e_header "Deploying dotfiles..."
+
+  execute_make deploy
+
+  e_newline && e_done "Deploy"
+}
+
+dotfiles_initialize() {
+  e_newline
+  e_header "Initializing dotfiles..."
+
+  execute_make init
+
+  e_newline && e_done "Initialize"
+}
+
+# A script for the file named "install"
+dotfiles_install() {
+  # 1. Download the repository
+  # ==> downloading
+  #
+  # Priority: git > curl > wget
+  dotfiles_download &&
+
+  # 2. Deploy dotfiles to your home directory
+  # ==> deploying
+  dotfiles_deploy &&
+
+  # 3. Execute all sh files within etc/init/
+  # ==> initializing
+  dotfiles_initialize
+}
+
+# Restart shell if specified "bash -c $(curl -L {URL})"
+# not restart:
+#   curl -L {URL} | bash
+restart_shell() {
+  if [ -p /dev/stdin ]; then
+    e_warning "Now continue with Rebooting your shell"
+  else
+    e_newline
+    e_arrow "Restarting your shell..."
+    exec "${SHELL:-/bin/zsh}"
+  fi
+}
+
+
+
+trap "e_error 'terminated'; exit 1" INT ERR
+include_core
+e_header "$dotfiles_logo"
+dotfiles_install
+restart_shell
+

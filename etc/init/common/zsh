@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#          _
+#  _______| |__
+# |_  / __| '_ \
+#  / /\__ \ | | |
+# /___|___/_| |_|
+#
+#
+
+source "$DOTPATH/etc/core"
+package install zsh
+

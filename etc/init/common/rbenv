@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#       _
+#  _ __| |__   ___ _ ____   __
+# | '__| '_ \ / _ \ '_ \ \ / /
+# | |  | |_) |  __/ | | \ V /
+# |_|  |_.__/ \___|_| |_|\_/
+#
+#
+
+rbenv_path=$HOME/.rbenv
+rbenv_plugin_path=$rbenv_path/plugins
+dependency_packages=(gcc gcc-c++ openssl-devel readline-devel zlib-devel libyaml-devel)
+
+source "$DOTPATH/etc/core"
+
+e_newline
+e_header "Install rbenv..." | e_indent
+
+if [ -e $rbenv_path ]; then
+  log_fail "$rbenv_path already exists. Nothing to do."
+  exit 1
+fi
+
+for p in $dependency_packages
+do
+  package install $p
+done
+
+git clone https://github.com/rbenv/rbenv.git $rbenv_path
+cd $rbenv_path && src/configure && make -C src
+
+if [ ! -e $rbenv_plugin_path ]; then
+  mkdir $rbenv_plugin_path
+fi
+git clone https://github.com/rbenv/ruby-build.git $rbenv_plugin_path/ruby-build
+
+e_newline
+e_done "Install" | e_indent
+
