@@ -16,8 +16,7 @@ export LANG=ja_JP.UTF-8
 export EDITOR=vim
 
 # xtermを256色表示可能にする
-if [ "$TERM"="xterm" ]
-then
+if [ "$TERM"="xterm" ]; then
   export TERM="xterm-256color"
 fi
 
@@ -25,20 +24,16 @@ fi
 # ========================================
 #   rbenv設定
 # ========================================
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)"
+if [ -d ~/.rbenv ]; then
+  export PATH="$HOME/.rbenv/bin:$PATH"
+  eval "$($HOME/.rbenv/bin/rbenv init -)"
+fi
 
 
 # ========================================
 #   screen設定
 # ========================================
-if [ "$TERM"="screen-bce" ]
-then
+if [ ! -z "$STY" ]; then
   export SHELL_NAME="$(basename $SHELL)"
 fi
-
-# ========================================
-#   dotfilesにパスを通す
-# ========================================
-export PATH="$HOME/.dotfiles/bin:$PATH"
 
