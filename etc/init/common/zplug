@@ -11,7 +11,7 @@
 source "$DOTPATH/etc/core"
 
 e_newline
-e_header "Install $(basename $0)" | e_indent
+e_indent 4 $(e_header "Install $(basename $0)")
 
 if is_exists curl; then
   curl -sL zplug.sh/installer | zsh
@@ -21,5 +21,5 @@ else
 fi
 
 e_newline
-e_done "Install" | e_indent
+e_indent 4 $(e_done "Install")
 
