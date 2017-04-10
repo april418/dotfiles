@@ -9,5 +9,12 @@
 #
 
 source "$DOTPATH/etc/core"
+
+e_newline
+e_header "Install $(basename $0)" | e_indent
+
 package install zsh
+
+e_newline
+e_done "Install" | e_indent
 
