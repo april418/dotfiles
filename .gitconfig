@@ -13,25 +13,25 @@
   ba = branch -a
   bd = branch -D
   c = commit
-  ca = commit --amend  --no-edit -m
+  ca = "!f() { if [ -z \"$1\" ]; then git commit --amend --no-edit; else git commit --amend --no-edit -m \"$1\"; fi; }; f"
   cm = commit -m
   co = checkout
   cob = checkout -b
-  cp = "!f() { if [ \"$1\" = '' ]; then git id | git cherry-pick; else git cherry-pick $1; fi; }; f"
+  cp = "!f() { if [ -z \"$1\" ]; then git id | git cherry-pick; else git cherry-pick $1; fi; }; f"
   id = show -s --format=%H
   st = status
   s = stash
-  su = stash -u
-  sa = "!f() { if [ \"$1\" = '' ]; then git stash apply; else git stash apply stash@{$1}; fi; }; f"
-  ss = "!f() { if [ \"$1\" = '' ]; then git stash show -p; else git stash show -p stash@{$1}; fi; }; f"
-  sp = "!f() { if [ \"$1\" = '' ]; then git stash pop; else git stash pop stash@{$1}; fi; }; f"
-  sd = "!f() { if [ \"$1\" = '' ]; then git stash drop; else git stash drop stash@{$1}; fi; }; f"
+  sa = "!f() { if [ -z \"$1\" ]; then git stash apply; else git stash apply stash@{$1}; fi; }; f"
+  sd = "!f() { if [ -z \"$1\" ]; then git stash drop; else git stash drop stash@{$1}; fi; }; f"
   sl = stash list
+  sp = "!f() { if [ -z \"$1\" ]; then git stash pop; else git stash pop stash@{$1}; fi; }; f"
+  ss = "!f() { if [ -z \"$1\" ]; then git stash show -p; else git stash show -p stash@{$1}; fi; }; f"
+  su = stash -u
   tr = log --graph --pretty='format:%C(yellow)%h%Creset %s %Cgreen(%an)%Creset %Cred%d%Creset'
   r = reset
-  rh = reset --hard
-  rr = "!f() { if [ \"$1\" = '' ]; then git reset HEAD@{1}; else git reset HEAD@{$1}; fi; }; f"
-  rl = reflog
   rb = rebase
   rbi = rebase -i
   rbc = rebase --continue
+  rh = reset --hard
+  rr = "!f() { if [ -z \"$1\" ]; then git reset HEAD@{1}; else git reset HEAD@{$1}; fi; }; f"
+  rl = reflog
