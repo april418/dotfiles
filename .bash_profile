@@ -18,6 +18,6 @@ export PATH
 # rbenv
 if [ -d ~/.rbenv ]; then
   export PATH="$HOME/.rbenv/bin:$PATH"
-  eval "$(~/.rbenv/bin/rbenv init)"
+  eval "$($HOME/.rbenv/bin/rbenv init -)"
 fi
 

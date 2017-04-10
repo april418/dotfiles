@@ -14,13 +14,13 @@ describe command('which rbenv') do
 end
 
 describe file("#{HOME}/.bash_profile") do
-  its(:content) { should match(%r[^export PATH="\$HOME/\.rbenv/bin:\$PATH"$]) }
-  its(:content) { should match(%r[^eval "\$\(\$HOME/\.rbenv/bin/rbenv init -\)"$]) }
+  its(:content) { should match(%r[^\s*export PATH="\$HOME/\.rbenv/bin:\$PATH"$]) }
+  its(:content) { should match(%r[^\s*eval "\$\(\$HOME/\.rbenv/bin/rbenv init -\)"$]) }
 end
 
 describe file("#{HOME}/.zshenv") do
-  its(:content) { should match(%r[^export PATH="\$HOME/\.rbenv/bin:\$PATH"$]) }
-  its(:content) { should match(%r[^eval "\$\(\$HOME/\.rbenv/bin/rbenv init -\)"$]) }
+  its(:content) { should match(%r[^\s*export PATH="\$HOME/\.rbenv/bin:\$PATH"$]) }
+  its(:content) { should match(%r[^\s*eval "\$\(\$HOME/\.rbenv/bin/rbenv init -\)"$]) }
 end
 
 describe file("#{HOME}/.rbenv/plugins") do
