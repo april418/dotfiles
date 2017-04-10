@@ -288,9 +288,9 @@ package() {
     trap 'message_exit "Failed to $1 package"' ERR INT
 
     if is_debian; then
-      apt-get -y $@ >/dev/null
+      sudo apt-get -y $@ >/dev/null
     elif is_redhat; then
-      yum -y $@ >/dev/null
+      sudo yum -y $@ >/dev/null
     else
       message_exit "Unknown OS destribution"
     fi

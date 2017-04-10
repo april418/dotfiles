@@ -14,12 +14,11 @@ dependency_packages=(gcc gcc-c++ openssl-devel readline-devel zlib-devel libyaml
 
 source "$DOTPATH/etc/core"
 
-e_newline
-e_indent 4 $(e_header "Install $(basename $0)")
+e_indent 4 "$(e_header "Install $(basename $0 | sed -e 's/[0-9_]//g')")"
 
 if [ -e $rbenv_path ]; then
-  log_fail "$rbenv_path already exists. Nothing to do."
-  exit 1
+  e_indent 4 "$(e_warning "$rbenv_path already exists. Nothing to do.")"
+  exit 0
 fi
 
 for p in $dependency_packages
@@ -35,6 +34,6 @@ if [ ! -e $rbenv_plugin_path ]; then
 fi
 git clone https://github.com/rbenv/ruby-build.git $rbenv_plugin_path/ruby-build
 
+e_indent 4 "$(e_done "Install")"
 e_newline
-e_indent 4 $(e_done "Install")
 

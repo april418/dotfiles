@@ -10,8 +10,7 @@
 
 source "$DOTPATH/etc/core"
 
-e_newline
-e_indent 4 $(e_header "Install $(basename $0)")
+e_indent 4 "$(e_header "Install $(basename $0 | sed -e 's/[0-9_]//g')")"
 
 if is_exists curl; then
   curl -sL zplug.sh/installer | zsh
@@ -20,6 +19,6 @@ else
   git clone https://github.com/zplug/zplug $ZPLUG_HOME
 fi
 
+e_indent 4 "$(e_done "Install")"
 e_newline
-e_indent 4 $(e_done "Install")
 

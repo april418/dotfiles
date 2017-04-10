@@ -34,14 +34,12 @@ confirm_dotpath_exist() {
 }
 
 initialize() {
-  for i in "$DOTPATH/etc/init/$(detect_os | head -n1)/*"
+  init_path="$DOTPATH/etc/init/$(detect_os | head -n1)"
+  for p in $(ls $init_path)
   do
-    if [ -f "$i" ]; then
-      e_newline
-      e_indent 2 $(e_arrow $(basename $i))
-      if [ "${DEBUG:-}" != 1 ]; then
-        bash "$i"
-      fi
+    if [ -f "$init_path/$p" ]; then
+      e_indent 2 "$(e_arrow $p)"
+      bash "$init_path/$p"
     else
       continue
     fi
@@ -57,5 +55,5 @@ include_core
 confirm_dotpath_exist
 keep_sudo
 initialize
-e_indent 2 $(e_done "$0: Finish!!" | sed "s $DOTPATH \$DOTPATH g")
+e_indent 2 "$(e_done "$(basename $0): Finish!!")"
 
