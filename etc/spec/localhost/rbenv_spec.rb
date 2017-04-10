@@ -1,8 +1,5 @@
 require 'spec_helper'
 
-USER = ENV['USER']
-HOME = ENV['HOME']
-
 %w(gcc gcc-c++ openssl-devel readline-devel zlib-devel libyaml-devel).each do |pkg|
   describe package(pkg) do
     it { should be_installed }
