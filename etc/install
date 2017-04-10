@@ -152,4 +152,5 @@ include_core
 e_header "$dotfiles_logo"
 dotfiles_install
 restart_shell
+exit 0
 
