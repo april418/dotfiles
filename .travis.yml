@@ -14,11 +14,11 @@ os:
   - ubuntu 16.04
   - ubuntu 17
 
-#install:
-#  - bash -c "$(curl -L raw.githubusercontent.com/april418/dotfiles/master/etc/install)"
+install:
+  - TESTING=true bash -c "$(curl -L raw.githubusercontent.com/april418/dotfiles/master/etc/install)"
 
 script:
-  - bash -c "$(curl -L raw.githubusercontent.com/april418/dotfiles/master/etc/install)"; make test
+  - make test
 
 sudo: required
 

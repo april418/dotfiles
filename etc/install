@@ -129,24 +129,25 @@ dotfiles_install() {
   dotfiles_initialize
 }
 
-# Restart shell if specified "bash -c $(curl -L {URL})"
-# not restart:
-#   curl -L {URL} | bash
-restart_shell() {
-  if [ -p /dev/stdin ]; then
-    e_warning "Now continue with Rebooting your shell"
-  else
-    e_newline && e_arrow "Restarting your shell..."
-    exec "${SHELL:-/bin/zsh}"
-  fi
-}
-
 
 
 trap "e_error 'terminated'; exit 1" INT ERR
+
 include_core
+
 e_header "$dotfiles_logo"
+
 dotfiles_install
-restart_shell
+
+# Restart shell if specified "bash -c $(curl -L {URL})"
+# not restart:
+#   curl -L {URL} | bash
+if [ -p /dev/stdin -o "$TESTING" = "true" ]; then
+  e_warning "Now continue with Rebooting your shell"
+else
+  e_newline && e_arrow "Restarting your shell..."
+  exec "${SHELL:-/bin/zsh}"
+fi
+
 exit 0
 
