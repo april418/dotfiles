@@ -10,7 +10,7 @@
 
 rbenv_path=$HOME/.rbenv
 rbenv_plugin_path=$rbenv_path/plugins
-declare -a dependency_packages=(gcc gcc-c++ openssl-devel readline-devel zlib-devel libyaml-devel)
+dependency_packages="gcc gcc-c++ openssl-devel readline-devel zlib-devel libyaml-devel"
 
 source "$DOTPATH/etc/core"
 
@@ -21,7 +21,7 @@ if [ -e $rbenv_path ]; then
   exit 0
 fi
 
-package install "${dependency_packages[@]}"
+package install "$dependency_packages"
 
 git clone https://github.com/rbenv/rbenv.git $rbenv_path
 cd $rbenv_path && src/configure && make -C src
