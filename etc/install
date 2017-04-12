@@ -65,12 +65,11 @@ execute_make() {
 
 # include core script
 include_core() {
-  eval "$(curl -sL raw.githubusercontent.com/april418/dotfiles/master/etc/core)"
+  eval "$(curl -s -L raw.githubusercontent.com/april418/dotfiles/master/etc/core)"
 }
 
 dotfiles_download() {
-  e_newline
-  e_header "Downloading dotfiles..."
+  e_newline && e_header "Downloading dotfiles..."
 
   confirm_dotfiles_not_exist
 
@@ -98,8 +97,7 @@ dotfiles_download() {
 }
 
 dotfiles_deploy() {
-  e_newline
-  e_header "Deploying dotfiles..."
+  e_newline && e_header "Deploying dotfiles..."
 
   execute_make deploy
 
@@ -107,8 +105,7 @@ dotfiles_deploy() {
 }
 
 dotfiles_initialize() {
-  e_newline
-  e_header "Initializing dotfiles..."
+  e_newline && e_header "Initializing dotfiles..."
 
   execute_make init
 
@@ -139,8 +136,7 @@ restart_shell() {
   if [ -p /dev/stdin ]; then
     e_warning "Now continue with Rebooting your shell"
   else
-    e_newline
-    e_arrow "Restarting your shell..."
+    e_newline && e_arrow "Restarting your shell..."
     exec "${SHELL:-/bin/zsh}"
   fi
 }
