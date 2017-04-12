@@ -7,6 +7,7 @@
 #  \___\___/|_|  \___|
 #
 #
+
 # This script define core modules.
 #
 # Table of modules:
@@ -26,6 +27,22 @@ fi
 is_exists() {
   which "$1" >/dev/null 2>&1
   return $?
+}
+
+to_lower_case() {
+  if [ -p /dev/stdin ]; then
+    tr '[:upper:]' '[:lower:]' </dev/stdin
+  else
+    echo "$@" | tr '[:upper:]' '[:lower:]'
+  fi
+}
+
+to_upper_case() {
+  if [ -p /dev/stdin ]; then
+    tr '[:lower:]' '[:upper:]' </dev/stdin
+  else
+    echo "$@" | tr '[:lower:]' '[:upper:]'
+  fi
 }
 
 
@@ -203,8 +220,12 @@ log_echo() {
 
 pattern='[-_]release$\|[-_]version$'
 
+cat_release_files() {
+  find /etc/* -maxdepth 0 -type f | grep $pattern | xargs cat
+}
+
 detect_os_version() {
-  ls /etc | grep $pattern | xargs -n1 -I{} cat /etc/{} | uniq | tr -dc '0-9.\n'
+  cat_release_files | tr -dc '0-9.\n'
 }
 
 detect_os_bit() {
@@ -212,47 +233,27 @@ detect_os_bit() {
 }
 
 detect_os_destribution() {
-  local destribution_types=(debian redhat arch)
-  local destributions=(centos ubuntu fedora oracle turbolinux suse mandriva vine gentoo)
-  local destribution_type=
+  local -a destributions=(centos ubuntu fedora oracle turbolinux suse mandriva vine gentoo arch)
+  local release_content="$(cat_release_files | to_lower_case)"
   local destribution=
+  local i=
 
-  for i in $(ls /etc | grep $pattern | sed -e "s/$pattern//g" | tr 'A-Z' 'a-z')
-  do
-    case "${destribution_types[@]}" in
-      *"$i"*) destribution_type="$i" ;;
-    esac
-    case "${destributions[@]}" in
-      *"$i"*) destribution="$i" ;;
-    esac
+  for ((i=0; i < ${#destributions[@]}; i++)); do
+    destribution="${destributions[$i]}"
+    if [[ "$release_content" =~ "$destribution" ]]; then
+      echo "$destribution"
+      return 0
+    fi
   done
 
-  destribution_type=${destribution_type:-'unknown'}
-  destribution=${destribution:-'unknown'}
-
-  echo $destribution
-  echo $destribution_type
+  echo "unknown"
+  return 1
 }
 
 detect_os() {
   detect_os_destribution
   detect_os_version
   detect_os_bit
-}
-
-is_debian() {
-  test "$(detect_os_destribution | tail -n1)" = "debian"
-  return $?
-}
-
-is_redhat() {
-  test "$(detect_os_destribution | tail -n1)" = "redhat"
-  return $?
-}
-
-is_arch() {
-  test "$(detect_os_destribution | tail -n1)" = "arch"
-  return $?
 }
 
 
@@ -284,44 +285,38 @@ package() {
   }
 
   _package() {
+    local command=
+
     set -eu
     trap 'message_exit "Failed to $1 package"' ERR INT
 
-    if is_debian; then
-      sudo apt-get -y $@ >/dev/null
-    elif is_redhat; then
-      sudo yum -y $@ >/dev/null
+    if is_exists "apt-get"; then
+      case $1 in
+        install) command=install ;;
+        update)  command=upgrade ;;
+        remove)  command=remove ;;
+        help)    usage_exit ;;
+        *)       usage_exit ;;
+      esac
+      shift
+      sudo apt-get -y "$command" $@ >/dev/null
+    elif is_exists "yum"; then
+      case $1 in
+        install) command=install ;;
+        update)  command=update ;;
+        remove)  command=remove ;;
+        help)    usage_exit ;;
+        *)       usage_exit ;;
+      esac
+      shift
+      sudo yum -y "$command" $@ >/dev/null
     else
-      message_exit "Unknown OS destribution"
+      message_exit "yum or apt-get required."
     fi
 
     set +eu
   }
 
-  option() {
-    if is_debian; then
-      case $1 in
-        install) echo install ;;
-        update)  echo upgrade ;;
-        remove)  echo remove ;;
-        help)    usage_exit ;;
-        *)       usage_exit ;;
-      esac
-    elif is_redhat; then
-      case $1 in
-        install) echo install ;;
-        update)  echo update ;;
-        remove)  echo remove ;;
-        help)    usage_exit ;;
-        *)       usage_exit ;;
-      esac
-    else
-      message_exit "Unknown OS destribution"
-    fi
-  }
-
-  _package "$(option $1)" "$2"
+  _package $@
 }
-
-
 
