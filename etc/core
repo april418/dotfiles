@@ -299,7 +299,7 @@ package() {
         *)       usage_exit ;;
       esac
       shift
-      sudo apt-get -y "$command" $@ >/dev/null
+      sudo apt-get -y "$command" $@
     elif is_exists "yum"; then
       case $1 in
         install) command=install ;;
@@ -309,7 +309,7 @@ package() {
         *)       usage_exit ;;
       esac
       shift
-      sudo yum -y "$command" $@ >/dev/null
+      sudo yum -y "$command" $@
     else
       message_exit "yum or apt-get required."
     fi
