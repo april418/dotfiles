@@ -142,7 +142,10 @@ dotfiles_install
 # Restart shell if specified "bash -c $(curl -L {URL})"
 # not restart:
 #   curl -L {URL} | bash
-if [ -p /dev/stdin -o "$TESTING" = "true" ]; then
+if [ "$TESTING" = "true" ]; then
+  e_newline && e_arrow "Reloading environment..."
+  source ~/.bash_profile
+elif [ -p /dev/stdin ]; then
   e_warning "Now continue with Rebooting your shell"
 else
   e_newline && e_arrow "Restarting your shell..."
