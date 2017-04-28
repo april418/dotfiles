@@ -6,6 +6,7 @@
 # | | | | | | |_| | (_| | | |/ /  __/
 # |_|_| |_|_|\__|_|\__,_|_|_/___\___|
 #
+#
 
 # include core script
 include_core() {
@@ -18,8 +19,7 @@ keep_sudo() {
 
   # Keep-alive: update existing `sudo` time stamp
   #             until this script has finished
-  while true
-  do
+  while true; do
     sudo -n true
     sleep 60;
     kill -0 "$$" || exit
@@ -35,13 +35,10 @@ confirm_dotpath_exist() {
 
 initialize() {
   init_path="$DOTPATH/etc/init/$(detect_os | head -n1)"
-  for p in $(ls $init_path)
-  do
+  for p in $(ls $init_path); do
     if [ -f "$init_path/$p" ]; then
       e_indent 2 "$(e_arrow $p)"
       bash "$init_path/$p"
-    else
-      continue
     fi
   done
 }

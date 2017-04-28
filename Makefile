@@ -4,11 +4,13 @@
 # | |  | | (_| |   <  __/  _| | |  __/
 # |_|  |_|\__,_|_|\_\___|_| |_|_|\___|
 #
+#
 
-DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-CANDIDATES := $(wildcard .??*) bin
-EXCLUSIONS := .DS_Store .git .gitmodules .travis.yml
-DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
+DOTPATH     := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+DIRECTORIES := .vim .vim/syntax bin
+CANDIDATES  := $(shell find .* -maxdepth 0 -type f) $(foreach val, $(DIRECTORIES), $(shell find $(val) -maxdepth 1 -type f))
+EXCLUSIONS  := .DS_Store .git .gitmodules .travis.yml $(wildcard .*.swp)
+DOTFILES    := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
 # same as 'all: help'
 .DEFAULT_GOAL := help
@@ -20,6 +22,7 @@ list: ## Show dot files in this repo
 deploy: ## Create symlink to home directory
 	@echo '==> Start to deploy dotfiles to home directory.'
 	@echo ''
+	@$(foreach val, $(DIRECTORIES), test ! -d $(abspath $(val)) && mkdir $(abspath $(val)); :;)
 	@$(foreach val, $(DOTFILES), ln -sfnv $(abspath $(val)) $(HOME)/$(val);)
 
 init: ## Setup environment settings
@@ -45,5 +48,5 @@ help: ## Self-documented Makefile
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 test: ## Execute serverspec
-	cd $(DOTPATH)/etc && bundle && rake spec:localhost
+	@cd $(DOTPATH)/etc && bundle && rake spec:localhost
 
