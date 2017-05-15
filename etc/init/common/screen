@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#
+#  ___  ___ _ __ ___  ___ _ __
+# / __|/ __| '__/ _ \/ _ \ '_ \
+# \__ \ (__| | |  __/  __/ | | |
+# |___/\___|_|  \___|\___|_| |_|
+#
+#
+
+source "$DOTPATH/etc/core"
+
+e_indent 4 "$(e_header "Install $(basename $0 | sed -e 's/[0-9_]//g')")"
+
+package install screen
+
+e_indent 4 "$(e_done "Install")"
+e_newline
+

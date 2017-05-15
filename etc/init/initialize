@@ -34,7 +34,7 @@ confirm_dotpath_exist() {
 }
 
 initialize() {
-  init_path="$DOTPATH/etc/init/$(detect_os | head -n1)"
+  local init_path="$DOTPATH/etc/init/$(detect_os | head -n1)"
   for p in $(ls $init_path); do
     if [ -f "$init_path/$p" ]; then
       e_indent 2 "$(e_arrow $p)"

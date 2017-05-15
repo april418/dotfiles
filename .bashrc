@@ -15,7 +15,7 @@ fi
 # =======================================
 # screenのstatusbarにディレクトリ名/コマンド名を表示させる
 # =======================================
-if [ $TERM == 'screen' ] || [ $TERM == 'screen-bce' ]; then
+if [ $TERM='screen' ] || [ $TERM='screen-bce' ]; then
   export PS1='[\u@\h \W]\$ '
   export PROMPT_COMMAND='echo -ne "\033k\033\0134\033k$(basename $(pwd))\033\\"'
 else
@@ -26,5 +26,7 @@ fi
 # =======================================
 # gitの補完設定
 # =======================================
-source ~/.git-completion.bash
+if [ -f ~/.git-completion.bash ]; then
+  source ~/.git-completion.bash
+fi
 

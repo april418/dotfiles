@@ -233,14 +233,18 @@ detect_os_bit() {
 }
 
 detect_os_destribution() {
-  local -a destributions=(centos ubuntu fedora oracle turbolinux suse mandriva vine gentoo arch)
+  local -a destributions=(centos ubuntu fedora oracle turbolinux suse mandriva vine gentoo arch cygwin)
+  local uname_content="$(uname -a | to_lower_case)"
   local release_content="$(cat_release_files | to_lower_case)"
   local destribution=
   local i=
 
   for ((i=0; i < ${#destributions[@]}; i++)); do
     destribution="${destributions[$i]}"
-    if [[ "$release_content" =~ "$destribution" ]]; then
+    if [[ "$uname_content" =~ "$destribution" ]]; then
+      echo "$destribution"
+      return 0
+    elif [[ "$release_content" =~ "$destribution" ]]; then
       echo "$destribution"
       return 0
     fi
@@ -310,6 +314,16 @@ package() {
       esac
       shift
       sudo yum -y "$command" $@
+    elif is_exists "apt-cyg"; then
+      case $1 in
+        install) command=install ;;
+        update)  command=update ;;
+        remove)  command=remove ;;
+        help)    usage_exit ;;
+        *)       usage_exit ;;
+      esac
+      shift
+      sudo apt-cyg -y "$command" $@
     else
       message_exit "yum or apt-get required."
     fi
