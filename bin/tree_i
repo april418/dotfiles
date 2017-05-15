@@ -8,7 +8,7 @@
 #                  |_____|
 #
 
-# ignore files or directories written in '.tree_ignore' file.
+# ignore files or directories written in '.treeignore' file.
 tree_i () {
   local ignore="$(pwd)/.treeignore"
   if [ -f "$ignore" ]; then
