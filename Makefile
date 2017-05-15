@@ -8,7 +8,7 @@
 
 DOTPATH     := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 DIRECTORIES := .vim .vim/syntax .cache .cache/shell bin
-CANDIDATES  := $(shell find .* -maxdepth 0 -type f) $(foreach val, $(DIRECTORIES), $(shell test -d $(abspath $(val)) && find $(val) -maxdepth 1 -type f))
+CANDIDATES  := $(shell find .* -maxdepth 0 -type f) $(foreach val, $(DIRECTORIES), $(shell test -d $(abspath $(val)) && find $(val) -maxdepth 1 -type f -o -type l))
 EXCLUSIONS  := .DS_Store .git .gitmodules .travis.yml $(wildcard .*.swp)
 DOTFILES    := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 

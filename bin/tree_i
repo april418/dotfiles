@@ -10,7 +10,7 @@
 
 # ignore files or directories written in '.tree_ignore' file.
 tree_i () {
-  local ignore="$(pwd)/.tree_ignore"
+  local ignore="$(pwd)/.treeignore"
   if [ -f "$ignore" ]; then
     tree -I "$(cat "$ignore" | sed -e ':flag;N;$!b flag;s/\n/|/g')" $@
   else
