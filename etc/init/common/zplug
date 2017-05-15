@@ -12,12 +12,12 @@ source "$DOTPATH/etc/core"
 
 e_indent 4 "$(e_header "Install $(basename $0 | sed -e 's/[0-9_]//g')")"
 
-if is_exists curl; then
-  curl -sL zplug.sh/installer | zsh
-else
+#if is_exists curl; then
+#  curl -sL zplug.sh/installer | zsh
+#else
   export ZPLUG_HOME="$HOME/.zplug"
   git clone https://github.com/zplug/zplug $ZPLUG_HOME
-fi
+#fi
 
 e_indent 4 "$(e_done "Install")"
 e_newline

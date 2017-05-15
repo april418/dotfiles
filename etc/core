@@ -303,7 +303,11 @@ package() {
         *)       usage_exit ;;
       esac
       shift
-      sudo apt-get -y "$command" $@
+      if is_exists sudo; then
+        sudo apt-get -y "$command" $@
+      else
+        apt-get -y "$command" $@
+      fi
     elif is_exists "yum"; then
       case $1 in
         install) command=install ;;
@@ -313,7 +317,11 @@ package() {
         *)       usage_exit ;;
       esac
       shift
-      sudo yum -y "$command" $@
+      if is_exists sudo; then
+        sudo yum -y "$command" $@
+      else
+        yum -y "$command" $@
+      fi
     elif is_exists "apt-cyg"; then
       case $1 in
         install) command=install ;;
@@ -323,7 +331,11 @@ package() {
         *)       usage_exit ;;
       esac
       shift
-      sudo apt-cyg -y "$command" $@
+      if is_exists sudo; then
+        sudo apt-cyg "$command" $@
+      else
+        apt-cyg "$command" $@
+      fi
     else
       message_exit "yum or apt-get required."
     fi

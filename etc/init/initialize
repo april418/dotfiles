@@ -14,6 +14,10 @@ include_core() {
 }
 
 keep_sudo() {
+  if ! is_exists sudo; then
+    return
+  fi
+
   # Ask for the administrator password upfront
   sudo -v
 

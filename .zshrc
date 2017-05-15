@@ -211,6 +211,9 @@ zstyle ':completion:*:options' description 'yes'
 # したがって，すべての マッチ種別を別々に表示させたいなら以下のようにする
 zstyle ':completion:*' group-name ''
 # ファイル補完候補に色を付ける
+if [ -f ~/.dircolors ]; then
+  eval $(dircolors ~/.dircolors)
+fi
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 
