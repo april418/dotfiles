@@ -20,7 +20,14 @@ if [ "$TERM"="xterm" ]; then
   export TERM="xterm-256color"
 fi
 
+# $HOME/binにパスを通す
 export PATH=$HOME/bin:$PATH
+
+# localのzshenvを読み込む
+if [ -f ~/.zshenv.local ]; then
+  source ~/.zshenv.local
+fi
+
 
 # ========================================
 #   rbenv設定
