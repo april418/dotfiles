@@ -8,6 +8,15 @@
 
 
 # ========================================
+#   共通関数
+# ========================================
+function is_exists() {
+  which "$@" &> /dev/null
+  return $?
+}
+
+
+# ========================================
 #   zplugの設定
 # ========================================
 source ~/.zplug/init.zsh
@@ -16,6 +25,10 @@ source ~/.zplug/init.zsh
 zplug "b4b4r07/zsh-vimode-visual"
 # zshのvim modeを使いやすくする
 zplug "b4b4r07/zle-vimode"
+# powerlineがインストールされているときのみagnosterテーマを使用
+if is_exists "powerline"; then
+  zplug "themes/agnoster", from:oh-my-zsh, as:theme
+fi
 
 # 未インストール項目をインストールする
 if ! zplug check --verbose; then
@@ -73,26 +86,6 @@ local PINK="%{[38;5;005m%}"
 # viライクなキーバインド
 bindkey -v
 
-# 入力モードを変数に格納しておく
-INPUT_MODE="${BLUE}-- INSERT --$DEFAULT"
-function _update_input_mode() {
-  case $KEYMAP in
-    main|viins)
-      INPUT_MODE="${BLUE}-- INSERT --$DEFAULT" ;;
-    vicmd)
-      INPUT_MODE="${WHITE}-- NORMAL --$DEFAULT" ;;
-    vivis|vivli)
-      INPUT_MODE="${ORANGE}-- VISUAL --$DEFAULT" ;;
-  esac
-}
-
-# 入力モード変更時にプロンプト内容を更新
-function zle-keymap-select zle-line-init zle-line-finish {
-  _update_input_mode
-  _update_main_prompt
-  zle reset-prompt
-}
-
 # homeキーを使えるようにする
 bindkey "OH" beginning-of-line
 # endキーを使えるようにする
@@ -106,30 +99,8 @@ bindkey "[3~" delete-char
 # ========================================
 # 右側まで入力がきたら時間表示を消す
 setopt transient_rprompt
-# 変数展開など便利なプロント
+# 変数展開など
 setopt prompt_subst
-
-zstyle ":vcs_info:*" enable git svn hg bzr
-zstyle ":vcs_info:*" formats "(%s)-[%b]"
-zstyle ":vcs_info:*" actionformats "(%s)-[%b|%a]"
-zstyle ":vcs_info:(svn|bzr):*" branchformat "%b:r%r"
-zstyle ":vcs_info:bzr:*" use-simple true
-zstyle ":vcs_info:*" max-exports 6
-
-if is-at-least 4.3.10; then
-  # %cと%uが使えるようになる
-  # %c : ステージングされていて未コミットのファイルがあるときに展開
-  # %u : アンステージドファイルがあるときに展開
-  zstyle ":vcs_info:git:*" check-for-changes true
-  # %cの内容
-  zstyle ":vcs_info:git:*" stagedstr "$YELLOW<S> "
-  # %uの内容
-  zstyle ":vcs_info:git:*" unstagedstr "$RED<U> "
-  # 表示内容
-  zstyle ":vcs_info:git:*" formats "($GREEN%c%u%b%f)"
-  # 特別な状況(merge/rebase)用の表示内容
-  zstyle ":vcs_info:git:*" actionformats "(%s - $GREEN%c%u[%b|%a]%f)"
-fi
 
 # solarizedのテーマ設定に合わせて背景色を変える
 case ${SOLARIZED_THEME:-dark} in
@@ -137,32 +108,169 @@ case ${SOLARIZED_THEME:-dark} in
   *)     bkg=black;;
 esac
 
-# git管理下のディレクトリにいるときは記号を表示(いるかこれ？)
-function _prompt_char() {
-  if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-    echo "$BLUE±$DEFAULT%k%b"
-  else
-    echo ' '
+# powerlineがインストールされていたらagnosterテーマを上書き
+if is_exists "powerline"; then
+  zstyle ':vcs_info:*' enable git
+  zstyle ':vcs_info:*' check-for-changes false
+  zstyle ':vcs_info:git*' formats '%b'
+  zstyle ':vcs_info:git*' actionformats '%b (%a)'
+
+  CURRENT_BG='NONE'
+  if [[ -z "$PRIMARY_FG" ]]; then
+    PRIMARY_FG=black
   fi
-}
 
-# メインプロンプトの定義
-function _update_main_prompt() {
-  vcs_info
-  PROMPT="$DEFAULT%k%b
-%K{$BKG}[%B$PURPLE%n$DEFAULT%K{$BKG}%B@%B$PURPLE%m %b$YAMABUKI%K{$BKG}%~$DEFAULT%K{$BKG}$vcs_info_msg_0_] [$INPUT_MODE%K{$BKG}]%E$DEFAULT%k%b
-%K{$BKG}$(_prompt_char)%K{$BKG} %#$DEFAULT%k%b "
-}
+  # Characters
+  SEGMENT_SEPARATOR="\ue0b0"
+  PLUSMINUS="\u00b1"
+  BRANCH="\ue0a0"
+  DETACHED="\u27a6"
+  CROSS="\u2718"
+  LIGHTNING="\u26a1"
+  GEAR="\u2699"
 
-# 右プロンプト
-#RPROMPT="!%{%B$CYAN%}%!%{$DEFAULT%b%}"
-# 入力訂正プロンプト
-SPROMPT="%K{$BKG}${WHITE}correct: $RED%R$DEFAULT%K{$BKG} -> $GREEN%r$DEFAULT%K{$BKG} ? [No/Yes/Abort/Edit]%E$DEFAULT%k%b
-%K{$BKG}$(_prompt_char)%K{$BKG} %#$DEFAULT%k%b "
+  function prompt_mode() {
+    local input_mode=
+    local color=
+    local bg_color=
+    case $KEYMAP in
+      vicmd)
+        input_mode=" NORMAL "
+        color="white"
+        bg_color="black"
+        ;;
+      vivis|vivli)
+        input_mode=" VISUAL "
+        color="yellow"
+        bg_color="white"
+        ;;
+      main|viins|*)
+        input_mode=" INSERT "
+        color="cyan"
+        bg_color="white"
+        ;;
+    esac
+    prompt_segment $color $bg_color $input_mode
+  }
 
-# プロンプト表示直前にプロンプト内容を更新
-add-zsh-hook precmd _update_main_prompt
+  function prompt_git() {
+    local color ref
+    is_dirty() {
+      test -n "$(git status --porcelain --ignore-submodules)"
+    }
+    ref="$vcs_info_msg_0_"
+    if [[ -n "$ref" ]]; then
+      if is_dirty; then
+        color=yellow
+        ref="${ref} $PLUSMINUS"
+      else
+        color=green
+        ref="${ref} "
+      fi
+      if [[ "${ref/.../}" == "$ref" ]]; then
+        ref="$BRANCH $ref"
+      else
+        ref="$DETACHED ${ref/.../}"
+      fi
+      prompt_segment $color $PRIMARY_FG
+      print -Pn " $ref"
+    fi
+  }
 
+  function prompt_agnoster_main() {
+    RETVAL=$?
+    CURRENT_BG='NONE'
+    prompt_status
+    prompt_context
+    prompt_virtualenv
+    prompt_mode
+    prompt_dir
+    prompt_git
+    prompt_end
+  }
+
+  function prompt_agnoster_precmd() {
+    vcs_info
+    PROMPT='%{%f%b%k%}$(prompt_agnoster_main) '
+  }
+
+  function zle-keymap-select zle-line-init zle-line-finish {
+    prompt_agnoster_precmd
+    zle reset-prompt
+  }
+
+  SPROMPT="%K{$BKG}${WHITE}correct: $RED%R$DEFAULT%K{$BKG} -> $GREEN%r$DEFAULT%K{$BKG} ? [No/Yes/Abort/Edit]%E$DEFAULT%k%b
+  %#$DEFAULT%k%b "
+else
+  # バージョン管理ツールの情報を取得する
+  zstyle ":vcs_info:*" enable git svn hg bzr
+  zstyle ":vcs_info:*" formats "(%s)-[%b]"
+  zstyle ":vcs_info:*" actionformats "(%s)-[%b|%a]"
+  zstyle ":vcs_info:(svn|bzr):*" branchformat "%b:r%r"
+  zstyle ":vcs_info:bzr:*" use-simple true
+  zstyle ":vcs_info:*" max-exports 6
+
+  if is-at-least 4.3.10; then
+    # %cと%uが使えるようになる
+    # %c : ステージングされていて未コミットのファイルがあるときに展開
+    # %u : アンステージドファイルがあるときに展開
+    zstyle ":vcs_info:git:*" check-for-changes true
+    # %cの内容
+    zstyle ":vcs_info:git:*" stagedstr "$YELLOW<S> "
+    # %uの内容
+    zstyle ":vcs_info:git:*" unstagedstr "$RED<U> "
+    # 表示内容
+    zstyle ":vcs_info:git:*" formats "($GREEN%c%u%b%f)"
+    # 特別な状況(merge/rebase)用の表示内容
+    zstyle ":vcs_info:git:*" actionformats "(%s - $GREEN%c%u[%b|%a]%f)"
+  fi
+
+  # 入力モードを変数に格納しておく
+  INPUT_MODE="${BLUE}-- INSERT --$DEFAULT"
+  function _update_input_mode() {
+    case $KEYMAP in
+      main|viins)
+        INPUT_MODE="${BLUE}-- INSERT --$DEFAULT" ;;
+      vicmd)
+        INPUT_MODE="${WHITE}-- NORMAL --$DEFAULT" ;;
+      vivis|vivli)
+        INPUT_MODE="${ORANGE}-- VISUAL --$DEFAULT" ;;
+    esac
+  }
+
+  # 入力モード変更時にプロンプト内容を更新
+  function zle-keymap-select zle-line-init zle-line-finish {
+    _update_input_mode
+    _update_main_prompt
+    zle reset-prompt
+  }
+
+  # git管理下のディレクトリにいるときは記号を表示(いるかこれ？)
+  function _prompt_char() {
+    if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+      echo "$BLUE±$DEFAULT%k%b"
+    else
+      echo ' '
+    fi
+  }
+
+  # メインプロンプトの定義
+  function _update_main_prompt() {
+    vcs_info
+    PROMPT="$DEFAULT%k%b
+  %K{$BKG}[%B$PURPLE%n$DEFAULT%K{$BKG}%B@%B$PURPLE%m %b$YAMABUKI%K{$BKG}%~$DEFAULT%K{$BKG}$vcs_info_msg_0_] [$INPUT_MODE%K{$BKG}]%E$DEFAULT%k%b
+  %K{$BKG}$(_prompt_char)%K{$BKG} %#$DEFAULT%k%b "
+  }
+
+  # 右プロンプト
+  #RPROMPT="!%{%B$CYAN%}%!%{$DEFAULT%b%}"
+  # 入力訂正プロンプト
+  SPROMPT="%K{$BKG}${WHITE}correct: $RED%R$DEFAULT%K{$BKG} -> $GREEN%r$DEFAULT%K{$BKG} ? [No/Yes/Abort/Edit]%E$DEFAULT%k%b
+  %K{$BKG}$(_prompt_char)%K{$BKG} %#$DEFAULT%k%b "
+
+  # プロンプト表示直前にプロンプト内容を更新
+  add-zsh-hook precmd _update_main_prompt
+fi
 
 # ========================================
 #   補完
@@ -314,4 +422,9 @@ fi
 # Ctrl-sでターミナルがロックされないようにする
 stty stop undef
 
+# Cygwin用
+if [ ! -z "$CYGWIN" ]; then
+  alias -g ipconfig='(){ ipconfig $@ | iconv -f Shift_JIS -t UTF-8 }'
+  alias -g ping='(){ ping $@ | iconv -f Shift_JIS -t UTF-8 }'
+fi
 

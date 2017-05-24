@@ -48,6 +48,7 @@ call neobundle#begin(expand('~/.vim/bundle/'))
   NeoBundle 'tpope/vim-fugitive'
   NeoBundle 'kmnk/vim-unite-giti'
   NeoBundle 'gregsexton/gitv'
+  NeoBundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
 call neobundle#end()
 
 " Required:
@@ -360,7 +361,7 @@ set undodir=$HOME/.vim/undo
 "   Statuslineの設定
 " ========================================
 set laststatus=2
-if s:has_plugin('fugitive')
+if !s:has_plugin('powerline') && s:has_plugin('fugitive')
   set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ \[ENC=%{&fileencoding}]%P
 endif
 
