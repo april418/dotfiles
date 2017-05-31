@@ -17,6 +17,17 @@ function is_exists() {
 
 
 # ========================================
+#   初期化
+# ========================================
+if [ ! -d ~/.cache ]; then
+  mkdir ~/.cache
+fi
+if [ ! -d ~/.cache/zsh ]; then
+  mkdir ~/.cache/zsh
+fi
+
+
+# ========================================
 #   zplugの設定
 # ========================================
 source ~/.zplug/init.zsh
@@ -39,7 +50,7 @@ if ! zplug check --verbose; then
 fi
 
 # コマンドをリンクして、PATH に追加し、プラグインは読み込む
-zplug load --verbose
+zplug load #--verbose
 
 
 # ========================================
@@ -296,7 +307,7 @@ else
   #RPROMPT="!%{%B$CYAN%}%!%{$DEFAULT%b%}"
   # 入力訂正プロンプト
   SPROMPT="%K{$BKG}${WHITE}correct: $RED%R$DEFAULT%K{$BKG} -> $GREEN%r$DEFAULT%K{$BKG} ? [No/Yes/Abort/Edit]%E$DEFAULT%k%b
-%K{$BKG}$(_prompt_char)%K{$BKG} %#$DEFAULT%k%b "
+ %K{$BKG}$(_prompt_char)%K{$BKG} %#$DEFAULT%k%b "
 
   # プロンプト表示直前にプロンプト内容を更新
   add-zsh-hook precmd _update_main_prompt
@@ -340,11 +351,21 @@ zstyle ':completion:*:default' menu select=2
 # 補完関数の表示を過剰にする編
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
-zstyle ':completion:*:messages' format $YELLOW'%d'$DEFAULT
-zstyle ':completion:*:warnings' format $RED'No matches for:'$YELLOW' %d'$DEFAULT
-zstyle ':completion:*:descriptions' format $YELLOW'completing: '$WHITE'%B%d%b'$DEFAULT
-zstyle ':completion:*:corrections' format $YELLOW'%B%d '$RED'(errors: %e)%b'$DEFAULT
-zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.cache/zsh/completion
+if is_exists "powerline"; then
+  zstyle ':completion:*:messages' format "%K{black}%F{white} %d %k%F{black}$(print $SEGMENT_SEPARATOR)%f"
+  zstyle ':completion:*:warnings' format "%K{black}%F{white} No matches for %K{red}%F{black}$(print $SEGMENT_SEPARATOR)%K{red}%F{white} %d %k%F{red}$(print $SEGMENT_SEPARATOR)%f"
+  zstyle ':completion:*:descriptions' format "%K{black}%F{white} completing %K{cyan}%F{black}$(print $SEGMENT_SEPARATOR)%K{cyan}%F{white} %d %k%F{cyan}$(print $SEGMENT_SEPARATOR)%f"
+  zstyle ':completion:*:corrections' format "%K{black}%F{white} %d %K{red}%F{black}$(print $SEGMENT_SEPARATOR)%K{red}%F{white} errors: %e %k%F{red}$(print $SEGMENT_SEPARATOR)%f"
+  zstyle ':completion:*:options' description yes
+else
+  zstyle ':completion:*:messages' format "${YELLOW}%d${DEFAULT}"
+  zstyle ':completion:*:warnings' format "${RED}No matches for: ${YELLOW}%d${DEFAULT}"
+  zstyle ':completion:*:descriptions' format "${YELLOW}completing: ${WHITE}%B%d%b${DEFAULT}"
+  zstyle ':completion:*:corrections' format "${YELLOW}%B%d ${RED}(errors: %e)%b${DEFAULT}"
+  zstyle ':completion:*:options' description yes
+fi
 # グループ名に空文字列を指定すると，マッチ対象のタグ名がグループ名に使われる。
 # したがって，すべての マッチ種別を別々に表示させたいなら以下のようにする
 zstyle ':completion:*' group-name ''
@@ -379,7 +400,7 @@ add-zsh-hook chpwd chpwd_recent_dirs
 zstyle ':completion:*' recent-dirs-insert both
 zstyle ':chpwd:*' recent-dirs-max 500
 zstyle ':chpwd:*' recent-dirs-default true
-zstyle ':chpwd:*' recent-dirs-file "$HOME/.cache/shell/chpwd-recent-dirs"
+zstyle ':chpwd:*' recent-dirs-file "$HOME/.cache/zsh/chpwd-recent-dirs"
 zstyle ':chpwd:*' recent-dirs-pushd true
 
 
@@ -454,7 +475,7 @@ stty stop undef
 
 # Cygwin用
 if [ ! -z "$CYGWIN" ]; then
-  alias -g ipconfig='(){ ipconfig $@ | iconv -f Shift_JIS -t UTF-8 }'
-  alias -g ping='(){ ping $@ | iconv -f Shift_JIS -t UTF-8 }'
+  alias -g ipconfig='(){ ipconfig $@ | iconv -f cp932 -t UTF-8 }'
+  alias -g ping='(){ ping $@ | iconv -f cp932 -t UTF-8 }'
 fi
 

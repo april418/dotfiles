@@ -92,7 +92,7 @@ shelltitle "$ |$SHELL_NAME"
 
 # 最終行に表示する内容
 caption always "%L=%{= kY} %-Lw%{= Kk}%{= KR}%50> %{=bu KR}%n%f* %t%{= KR} %{= kK}%{= kY}%+Lw%<"
-hardstatus alwayslastline "%{= Ck} %H %{= kC}%{= kw} $LOGNAME %{= bk}%{= bw} %S %{= cb}%{= cw} %n%f* %t %{= kc}%=%{= cw} %Y/%m/%d %c:%s %{= }"
+hardstatus alwayslastline "%{= Ck} %H %{= kC}%{= kC} $LOGNAME %{= bk}%{= bk} %S %{= cb}%{= cw} %n%f* %t %{= kc}%=%{ky}%{= yk} %l %{= yg}%{= gk} %Y/%m/%d %c:%s %{= }"
 hardstatus off
 
 # デフォルト背景色を無効に
