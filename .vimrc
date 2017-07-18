@@ -49,6 +49,7 @@ call neobundle#begin(expand('~/.vim/bundle/'))
   NeoBundle 'kmnk/vim-unite-giti'
   NeoBundle 'gregsexton/gitv'
   NeoBundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+  NeoBundle 'wavded/vim-stylus'
 call neobundle#end()
 
 " Required:
