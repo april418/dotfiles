@@ -375,6 +375,6 @@ set backspace=indent,eol,start
 " 行末空白文字の削除
 autocmd BufWritePre * :%s/\(\s\|　\)\+$//ge
 " ファイル読み込み時にscreenタブの内容を書き換える
-au BufEnter * :silent exec "!echo -ne '\ekvi <afile>\e\\'"
+au BufRead,BufNewFile,BufReadPre * :silent exec "!echo -ne '\ekvi <afile>\e\\'"
 
 
