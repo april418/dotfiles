@@ -50,6 +50,8 @@ call neobundle#begin(expand('~/.vim/bundle/'))
   NeoBundle 'gregsexton/gitv'
   NeoBundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
   NeoBundle 'wavded/vim-stylus'
+  NeoBundle 'mxw/vim-jsx'
+  NeoBundle 'mattn/emmet-vim'
 call neobundle#end()
 
 " Required:
@@ -120,11 +122,11 @@ inoremap <expr><CR>  pumvisible() ? neocomplete#close_popup() : "<CR>"
 "inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
 
 " Enable omni completion.
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType css           setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+autocmd FileType javascript    setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python        setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml           setlocal omnifunc=xmlcomplete#CompleteTags
 
 " Enable heavy omni completion.
 if !exists('g:neocomplete#sources#omni#input_patterns')
@@ -221,8 +223,8 @@ if s:has_plugin('submode')
 endif
 
 " ESCキーを2回押すと終了する
-au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
-au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
+autocmd FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
+autocmd FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
 
 
 " ========================================
@@ -269,23 +271,63 @@ endif
 
 
 " ========================================
+"   emmet-vim設定
+" ========================================
+if s:has_plugin('emmet')
+  " どのモードでコマンドを使えるようにするか
+  "   n - normal
+  "   i - insert
+  "   v - visual
+  "   a - all
+  "   組み合わせ可
+  let g:user_emmet_mode='a'
+  " コマンド開始キー
+  let g:user_emmet_leader_key='<C-e>'
+  " 元々のコマンドをなかったことに
+  nnoremap e <Nop>
+  vnoremap e <Nop>
+  " キーバインド
+  " カーソル位置までのすべてを展開
+  nnoremap <silent> ee :call emmet#expandAbbr(3,"")<CR>
+  " 選択範囲を囲むタグを作成
+  vnoremap <silent> er :call emmet#expandAbbr(2,"")<CR>
+  " 一つのタグのみを展開
+  nnoremap <silent> ew :call emmet#expandAbbr(1,"")<CR>
+  " タグの削除
+  nnoremap <silent> ed :call emmet#removeTag()<CR>
+  " コメントアウト/解除
+  nnoremap <silent> ec :call emmet#toggleComment()<CR>
+  " 選択範囲を一行にする
+  vnoremap <silent> em :call emmet#mergeLines()<CR>
+  " 中身のない次/前のタグ内で挿入モードに
+  nnoremap <silent> en :call emmet#moveNextPrev(0)<CR>
+  nnoremap <silent> eN :call emmet#moveNextPrev(1)<CR>
+endif
+
+
+" ========================================
 "   キーバインド
 " ========================================
 " 行頭へ移動
 noremap h ^
 " 行末へ移動
 noremap l $
+" ハイライトを消す
+nnoremap <silent> <ESC><ESC> :noh<CR>
 
 
 " ========================================
 "   ハイライト設定
 " ========================================
-" coffee
-au BufRead,BufNewFile,BufReadPre *.coffee set filetype=coffee
-" riot tag
-au BufRead,BufNewFile,BufReadPre *.tag set filetype=tag
-" cson
-au BufRead,BufNewFile,BufReadPre *.cson set filetype=coffee
+augroup SyntaxHighlights
+  autocmd!
+  " coffee
+  autocmd BufRead,BufNewFile,BufReadPre *.coffee set filetype=coffee
+  " riot tag
+  autocmd BufRead,BufNewFile,BufReadPre *.tag set filetype=tag
+  " cson
+  autocmd BufRead,BufNewFile,BufReadPre *.cson set filetype=coffee
+augroup END
 
 
 " ========================================
@@ -372,9 +414,17 @@ endif
 " ========================================
 " 普通にバックスペースできるように
 set backspace=indent,eol,start
+
 " 行末空白文字の削除
-autocmd BufWritePre * :%s/\(\s\|　\)\+$//ge
+augroup RemoveTwoByteSpaces
+  autocmd!
+  autocmd BufWritePre * :%s/\(\s\|　\)\+$//ge
+augroup END
+
 " ファイル読み込み時にscreenタブの内容を書き換える
-au BufRead,BufNewFile,BufReadPre * :silent exec "!echo -ne '\ekvi <afile>\e\\'"
+augroup RenameScreenTabTitle
+  autocmd!
+  autocmd BufRead,BufNewFile,WinEnter * :silent exec "!echo -ne '\ekvi <afile>\e\\'"
+augroup END
 
 
