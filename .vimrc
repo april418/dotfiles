@@ -424,7 +424,7 @@ augroup END
 " ファイル読み込み時にscreenタブの内容を書き換える
 augroup RenameScreenTabTitle
   autocmd!
-  autocmd BufRead,BufNewFile,WinEnter * :silent exec "!echo -ne '\ekvi <afile>\e\\'"
+  autocmd BufEnter * if @% == '' | :silent exec "!echo -ne '\ekvi anonymous buffer\e\\'" | else | :silent exec "!echo -ne '\ekvi <afile>\e\\'" | endif
 augroup END
 
 
