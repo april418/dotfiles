@@ -1,7 +1,10 @@
 require 'spec_helper'
 
-describe command('which rbenv') do
-  its(:stdout) { should match %r[#{HOME}/\.rbenv/libexec/rbenv] }
+describe file("#{HOME}/\.rbenv/libexec/rbenv") do
+  it { should be_file }
+  it { should be_owned_by USER }
+  it { should be_grouped_into USER }
+  it { should be_mode 755 }
 end
 
 describe file("#{HOME}/.bash_profile") do
@@ -25,7 +28,7 @@ describe file("#{HOME}/.rbenv/plugins/ruby-build") do
   it { should be_directory }
   it { should be_owned_by USER }
   it { should be_grouped_into USER }
-  it { should be_mode 755 }
+  #it { should be_mode 755 }
 end
 
 #%w(2.2.2).each do |version|
