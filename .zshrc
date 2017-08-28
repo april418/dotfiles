@@ -37,9 +37,7 @@ zplug "b4b4r07/zsh-vimode-visual"
 # zshのvim modeを使いやすくする
 zplug "b4b4r07/zle-vimode"
 # powerlineがインストールされているときのみagnosterテーマを使用
-if is_exists "powerline"; then
-  zplug "themes/agnoster", from:oh-my-zsh, as:theme
-fi
+zplug "themes/agnoster", from:oh-my-zsh, as:theme
 
 # 未インストール項目をインストールする
 if ! zplug check --verbose; then
@@ -127,191 +125,128 @@ zstyle ":vcs_info:(svn|bzr):*" branchformat "%b:r%r"
 zstyle ":vcs_info:bzr:*" use-simple true
 zstyle ":vcs_info:*" max-exports 6
 
-# powerlineがインストールされていたらagnosterテーマの一部を上書き
-if is_exists "powerline"; then
-  CURRENT_BG='NONE'
-  if [[ -z "$PRIMARY_FG" ]]; then
-    PRIMARY_FG=black
-  fi
-
-  # Characters
-  SEGMENT_SEPARATOR="\ue0b0"
-  PLUSMINUS="\u00b1"
-  PLUS="+"
-  BRANCH="\ue0a0"
-  DETACHED="\u27a6"
-  CROSS="\u2718"
-  LIGHTNING="\u26a1"
-  GEAR="\u2699"
-
-  if is-at-least 4.3.10; then
-    # %cと%uが使えるようになる
-    # %c : ステージングされていて未コミットのファイルがあるときに展開
-    # %u : アンステージドファイルがあるときに展開
-    zstyle ":vcs_info:git:*" check-for-changes true
-    # %cの内容
-    zstyle ":vcs_info:git:*" stagedstr "$PLUS "
-    # %uの内容
-    zstyle ":vcs_info:git:*" unstagedstr "$PLUSMINUS "
-    # 表示内容
-    zstyle ":vcs_info:git:*" formats "(%c%u%b)"
-    # 特別な状況(merge/rebase)用の表示内容
-    zstyle ":vcs_info:git:*" actionformats "(%s - %c%u[%b|%a])"
-  fi
-
-  function prompt_end() {
-    if [[ -n $CURRENT_BG ]]; then
-      print -n "%{%k%F{$CURRENT_BG}%K{$PRIMARY_FG}%}$SEGMENT_SEPARATOR"
-    else
-      print -n "%{%k%}"
-    fi
-    print -n "%{%f%K{$PRIMARY_FG}%F{white}%}%E
- %# %{%k%F{$PRIMARY_FG}%}$SEGMENT_SEPARATOR%{%f%}"
-    CURRENT_BG=''
-  }
-
-  function prompt_mode() {
-    local input_mode=
-    local color=
-    local bg_color=
-    case $KEYMAP in
-      vicmd)
-        input_mode=" NORMAL "
-        bg_color="white"
-        color="black"
-        ;;
-      vivis|vivli)
-        input_mode=" VISUAL "
-        bg_color="yellow"
-        color="white"
-        ;;
-      main|viins|*)
-        input_mode=" INSERT "
-        bg_color="cyan"
-        color="white"
-        ;;
-    esac
-    prompt_segment $bg_color $color $input_mode
-  }
-
-  function prompt_git() {
-    local color ref
-    ref="$vcs_info_msg_0_"
-    if [[ -n "$ref" ]]; then
-      if [[ "$ref" = *"$PLUSMINUS"* ]]; then
-        color=red
-      elif [[ "$ref" = *"$PLUS"* ]]; then
-        color=yellow
-      else
-        color=green
-      fi
-      ref="${ref} "
-      if [[ "${ref/.../}" == "$ref" ]]; then
-        ref="$BRANCH $ref"
-      else
-        ref="$DETACHED ${ref/.../}"
-      fi
-      prompt_segment $color $PRIMARY_FG
-      print -Pn " $ref"
-    fi
-  }
-
-  function prompt_agnoster_main() {
-    RETVAL=$?
-    CURRENT_BG='NONE'
-    prompt_status
-    prompt_context
-    prompt_virtualenv
-    prompt_mode
-    prompt_dir
-    prompt_git
-    prompt_end
-  }
-
-  function prompt_agnoster_precmd() {
-    vcs_info
-    PROMPT='%{%f%b%k%}
-$(prompt_agnoster_main) '
-  }
-
-  # 入力イベントごとにプロンプトを再描画
-  function zle-keymap-select zle-line-init zle-line-finish {
-    prompt_agnoster_precmd
-    zle reset-prompt
-  }
-
-  function sprompt_like_agnoster() {
-    prompt_segment black white " correct "
-    prompt_segment red white " %R "
-    prompt_segment green white " %r "
-    prompt_segment black white " ? [No/Yes/Abort/Edit] "
-    prompt_end
-  }
-
-  # 入力訂正プロンプト
-  SPROMPT="$(sprompt_like_agnoster)"
-else
-  if is-at-least 4.3.10; then
-    # %cと%uが使えるようになる
-    # %c : ステージングされていて未コミットのファイルがあるときに展開
-    # %u : アンステージドファイルがあるときに展開
-    zstyle ":vcs_info:git:*" check-for-changes true
-    # %cの内容
-    zstyle ":vcs_info:git:*" stagedstr "$YELLOW<S> "
-    # %uの内容
-    zstyle ":vcs_info:git:*" unstagedstr "$RED<U> "
-    # 表示内容
-    zstyle ":vcs_info:git:*" formats "($GREEN%c%u%b%f)"
-    # 特別な状況(merge/rebase)用の表示内容
-    zstyle ":vcs_info:git:*" actionformats "(%s - $GREEN%c%u[%b|%a]%f)"
-  fi
-
-  # 入力モードを変数に格納しておく
-  INPUT_MODE="${BLUE}-- INSERT --$DEFAULT"
-  function _update_input_mode() {
-    case $KEYMAP in
-      main|viins)
-        INPUT_MODE="${BLUE}-- INSERT --$DEFAULT" ;;
-      vicmd)
-        INPUT_MODE="${WHITE}-- NORMAL --$DEFAULT" ;;
-      vivis|vivli)
-        INPUT_MODE="${ORANGE}-- VISUAL --$DEFAULT" ;;
-    esac
-  }
-
-  # 入力モード変更時にプロンプト内容を更新
-  function zle-keymap-select zle-line-init zle-line-finish {
-    _update_input_mode
-    _update_main_prompt
-    zle reset-prompt
-  }
-
-  # git管理下のディレクトリにいるときは記号を表示(いるかこれ？)
-  function _prompt_char() {
-    if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-      echo "$BLUE±$DEFAULT%k%b"
-    else
-      echo ' '
-    fi
-  }
-
-  # メインプロンプトの定義
-  function _update_main_prompt() {
-    vcs_info
-    PROMPT="$DEFAULT%k%b
-%K{$BKG}[%B$PURPLE%n$DEFAULT%K{$BKG}%B@%B$PURPLE%m %b$YAMABUKI%K{$BKG}%~$DEFAULT%K{$BKG}$vcs_info_msg_0_] [$INPUT_MODE%K{$BKG}]%E$DEFAULT%k%b
- %K{$BKG}$(_prompt_char)%K{$BKG} %#$DEFAULT%k%b "
-  }
-
-  # 右プロンプト
-  #RPROMPT="!%{%B$CYAN%}%!%{$DEFAULT%b%}"
-  # 入力訂正プロンプト
-  SPROMPT="%K{$BKG}${WHITE}correct: $RED%R$DEFAULT%K{$BKG} -> $GREEN%r$DEFAULT%K{$BKG} ? [No/Yes/Abort/Edit]%E$DEFAULT%k%b
- %K{$BKG}$(_prompt_char)%K{$BKG} %#$DEFAULT%k%b "
-
-  # プロンプト表示直前にプロンプト内容を更新
-  add-zsh-hook precmd _update_main_prompt
+# agnosterテーマの一部を上書き
+CURRENT_BG='NONE'
+if [[ -z "$PRIMARY_FG" ]]; then
+  PRIMARY_FG=black
 fi
+
+# Characters
+SEGMENT_SEPARATOR="\ue0b0"
+PLUSMINUS="\u00b1"
+PLUS="+"
+BRANCH="\ue0a0"
+DETACHED="\u27a6"
+CROSS="\u2718"
+LIGHTNING="\u26a1"
+GEAR="\u2699"
+
+if is-at-least 4.3.10; then
+  # %cと%uが使えるようになる
+  # %c : ステージングされていて未コミットのファイルがあるときに展開
+  # %u : アンステージドファイルがあるときに展開
+  zstyle ":vcs_info:git:*" check-for-changes true
+  # %cの内容
+  zstyle ":vcs_info:git:*" stagedstr "$PLUS "
+  # %uの内容
+  zstyle ":vcs_info:git:*" unstagedstr "$PLUSMINUS "
+  # 表示内容
+  zstyle ":vcs_info:git:*" formats "(%c%u%b)"
+  # 特別な状況(merge/rebase)用の表示内容
+  zstyle ":vcs_info:git:*" actionformats "(%s - %c%u[%b|%a])"
+fi
+
+function prompt_end() {
+  if [[ -n $CURRENT_BG ]]; then
+    print -n "%{%k%F{$CURRENT_BG}%K{$PRIMARY_FG}%}$SEGMENT_SEPARATOR"
+  else
+    print -n "%{%k%}"
+  fi
+  print -n "%{%f%K{$PRIMARY_FG}%F{white}%}%E
+%# %{%k%F{$PRIMARY_FG}%}$SEGMENT_SEPARATOR%{%f%}"
+  CURRENT_BG=''
+}
+
+function prompt_mode() {
+  local input_mode=
+  local color=
+  local bg_color=
+  case $KEYMAP in
+    vicmd)
+      input_mode=" NORMAL "
+      bg_color="white"
+      color="black"
+      ;;
+    vivis|vivli)
+      input_mode=" VISUAL "
+      bg_color="yellow"
+      color="white"
+      ;;
+    main|viins|*)
+      input_mode=" INSERT "
+      bg_color="cyan"
+      color="white"
+      ;;
+  esac
+  prompt_segment $bg_color $color $input_mode
+}
+
+function prompt_git() {
+  local color ref
+  ref="$vcs_info_msg_0_"
+  if [[ -n "$ref" ]]; then
+    if [[ "$ref" = *"$PLUSMINUS"* ]]; then
+      color=red
+    elif [[ "$ref" = *"$PLUS"* ]]; then
+      color=yellow
+    else
+      color=green
+    fi
+    ref="${ref} "
+    if [[ "${ref/.../}" == "$ref" ]]; then
+      ref="$BRANCH $ref"
+    else
+      ref="$DETACHED ${ref/.../}"
+    fi
+    prompt_segment $color $PRIMARY_FG
+    print -Pn " $ref"
+  fi
+}
+
+function prompt_agnoster_main() {
+  RETVAL=$?
+  CURRENT_BG='NONE'
+  prompt_status
+  prompt_context
+  prompt_virtualenv
+  prompt_mode
+  prompt_dir
+  prompt_git
+  prompt_end
+}
+
+function prompt_agnoster_precmd() {
+  vcs_info
+  PROMPT='%{%f%b%k%}
+$(prompt_agnoster_main) '
+}
+
+# 入力イベントごとにプロンプトを再描画
+function zle-keymap-select zle-line-init zle-line-finish {
+  prompt_agnoster_precmd
+  zle reset-prompt
+}
+
+function sprompt_like_agnoster() {
+  prompt_segment black white " correct "
+  prompt_segment red white " %R "
+  prompt_segment green white " %r "
+  prompt_segment black white " ? [No/Yes/Abort/Edit] "
+  prompt_end
+}
+
+# 入力訂正プロンプト
+SPROMPT="$(sprompt_like_agnoster)"
 
 # ========================================
 #   補完
