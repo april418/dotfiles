@@ -10,7 +10,6 @@
 
 rbenv_path=$HOME/.rbenv
 rbenv_plugin_path=$rbenv_path/plugins
-dependency_packages="gcc gcc-c++ openssl-devel readline-devel zlib-devel libyaml-devel"
 
 source "$DOTPATH/etc/core"
 
@@ -20,8 +19,6 @@ if [ -e $rbenv_path ]; then
   e_indent 4 "$(e_warning "$rbenv_path already exists. Nothing to do.")"
   exit 0
 fi
-
-package install "$dependency_packages"
 
 git clone https://github.com/rbenv/rbenv.git $rbenv_path
 cd $rbenv_path && src/configure && make -C src

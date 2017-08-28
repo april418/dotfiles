@@ -1,11 +1,5 @@
 require 'spec_helper'
 
-%w(gcc gcc-c++ openssl-devel readline-devel zlib-devel libyaml-devel).each do |pkg|
-  describe package(pkg) do
-    it { should be_installed }
-  end
-end
-
 describe command('which rbenv') do
   its(:stdout) { should match %r[#{HOME}/\.rbenv/libexec/rbenv] }
 end
