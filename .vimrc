@@ -50,6 +50,8 @@ call neobundle#begin(expand('~/.vim/bundle/'))
   NeoBundle 'gregsexton/gitv'
   NeoBundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
   NeoBundle 'wavded/vim-stylus'
+  NeoBundle 'pangloss/vim-javascript'
+  NeoBundle 'jelera/vim-javascript-syntax'
   NeoBundle 'mxw/vim-jsx'
   NeoBundle 'mattn/emmet-vim'
 call neobundle#end()
@@ -303,6 +305,15 @@ if s:has_plugin('emmet')
   nnoremap <silent> en :call emmet#moveNextPrev(0)<CR>
   nnoremap <silent> eN :call emmet#moveNextPrev(1)<CR>
 endif
+
+
+" ========================================
+"   vim-jsx設定
+" ========================================
+"  拡張子をjsxに限定するか
+"    0 - しない
+"    1 - する
+let g:jsx_ext_required = 0
 
 
 " ========================================
