@@ -38,17 +38,19 @@ call neobundle#begin(expand('~/.vim/bundle/'))
   " Refer to |:NeoBundle-examples|.
   " Note: You don't set neobundle setting in .gvimrc!
   NeoBundle 'Shougo/neocomplete'
-  NeoBundle 'kchmck/vim-coffee-script'
-  NeoBundle 'ryym/vim-riot'
-  NeoBundle 'digitaltoad/vim-pug'
-  NeoBundle 'altercation/vim-colors-solarized'
   NeoBundle 'Shougo/unite.vim'
   NeoBundle 'Shougo/neomru.vim'
-  NeoBundle 'kana/vim-submode'
+  NeoBundle 'Shougo/neosnippet'
+  NeoBundle 'Shougo/neosnippet-snippets'
+  NeoBundle 'altercation/vim-colors-solarized'
+  NeoBundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
   NeoBundle 'tpope/vim-fugitive'
   NeoBundle 'kmnk/vim-unite-giti'
   NeoBundle 'gregsexton/gitv'
-  NeoBundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+  NeoBundle 'kana/vim-submode'
+  NeoBundle 'kchmck/vim-coffee-script'
+  NeoBundle 'ryym/vim-riot'
+  NeoBundle 'digitaltoad/vim-pug'
   NeoBundle 'wavded/vim-stylus'
   NeoBundle 'pangloss/vim-javascript'
   NeoBundle 'jelera/vim-javascript-syntax'

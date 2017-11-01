@@ -1,0 +1,11 @@
+#!/bin/bash
+
+source "$DOTPATH/etc/core"
+
+e_indent 4 "$(e_header "Install $(basename $0 | sed -e 's/[0-9_]//g')")"
+
+package install dkms
+
+e_indent 4 "$(e_done "Install")"
+e_newline
+
