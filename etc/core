@@ -337,7 +337,7 @@ package() {
         apt-cyg "$command" $@
       fi
     else
-      message_exit "yum or apt-get required."
+      message_exit "yum or apt-get, or apt-cyg required."
     fi
 
     set +eu

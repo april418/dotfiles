@@ -107,6 +107,8 @@ dotfiles_deploy() {
 dotfiles_initialize() {
   e_newline && e_header "Initializing dotfiles..."
 
+  export PATH="$PATH:$HOME/bin"
+
   execute_make init
 
   e_newline && e_done "Initialize"
