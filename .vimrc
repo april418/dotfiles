@@ -57,6 +57,8 @@ call neobundle#begin(expand('~/.vim/bundle/'))
   NeoBundle 'mxw/vim-jsx'
   NeoBundle 'mattn/emmet-vim'
   NeoBundle 'editorconfig/editorconfig-vim'
+  NeoBundle 'lumiliet/vim-twig'
+  NeoBundle 'Glench/Vim-Jinja2-Syntax'
 call neobundle#end()
 
 " Required:
