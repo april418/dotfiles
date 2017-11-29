@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#                                   _
+# __   ____ _  __ _ _ __ __ _ _ __ | |_
+# \ \ / / _` |/ _` | '__/ _` | '_ \| __|
+#  \ V / (_| | (_| | | | (_| | | | | |_
+#   \_/ \__,_|\__, |_|  \__,_|_| |_|\__|
+#             |___/
+#
+
+VIRTUALBOX_VERSION=5.2
+VAGRANT_VERSION=2.0.0
+
+source "$DOTPATH/etc/core"
+
+e_indent 4 "$(e_header "Install $(basename $0 | sed -e 's/[0-9_]//g')")"
+
+# install virtualbox
+sudo wget http://download.virtualbox.org/virtualbox/rpm/rhel/virtualbox.repo -P /etc/yum.repos.d/
+sudo yum list | grep VirtualBox
+sudo yum install "VirtualBox-${VIRTUALBOX_VERSION}"
+sudo usermod -a -G vboxusers "$USER"
+
+# install vagrant
+sudo rpm -Uvh "https://releases.hashicorp.com/vagrant/${VAGRANT_VERSION}/vagrant_${VAGRANT_VERSION}_$(uname -m).rpm"
+
+e_indent 4 "$(e_done "Install")"
+e_newline
+
