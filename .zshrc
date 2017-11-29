@@ -410,8 +410,17 @@ fi
 stty stop undef
 
 # Cygwin用
-if [ ! -z "$CYGWIN" ]; then
-  alias -g ipconfig='(){ ipconfig $@ | iconv -f cp932 -t UTF-8 }'
-  alias -g ping='(){ ping $@ | iconv -f cp932 -t UTF-8 }'
+if [ ! -z "$CYGWIN" ] || uname | grep -q 'CYGWIN'; then
+  alias ipconfig='(){ ipconfig $@ | iconv -f cp932 -t UTF-8 }'
+  alias ping='(){ ping $@ | iconv -f cp932 -t UTF-8 }'
+fi
+
+# tar.gzの圧縮・解凍
+alias targz='(){ tar -zcvf $@ }'
+alias untargz='(){ tar -zxvf $@ }'
+
+# local設定ファイルがあれば読み込む
+if [ -f ~/.zshrc.local ]; then
+  source ~/.zshrc.local
 fi
 
