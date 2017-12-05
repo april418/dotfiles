@@ -1,0 +1,37 @@
+#!/bin/bash
+
+function ansible-init() {
+  function usage_exit() {
+    echo "Usage: ansible-init -p project_name [-r role1,role2...]"
+    exit
+  }
+
+  while getopts p:r: OPT; do
+    case $OPT in
+      p) option_p=$OPTARG;;
+      r) option_r=$OPTARG;;
+      \?) usage_exit;;
+    esac
+  done
+
+  local directries="defaults,files,handlers,meta,tasks,templates,vars"
+  local root=${option_p:-playbooks}
+
+  mkdir -v "./$root"
+
+  if [ -z $option_r ]; then
+    exit
+  fi
+
+  echo $option_r | sed -e 's/,/\n/g' | while read role; do
+    mkdir -v "./$root/$role"
+
+    echo $directries | sed -e 's/,/\n/g'  | while read dir; do
+      mkdir -v "./$root/$role/$dir"
+      touch "./$root/$role/$dir/.gitkeep"
+    done
+  done
+}
+
+ansible-init $@
+
